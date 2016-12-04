@@ -16,7 +16,7 @@
 \ProvidesClass{aghdpl} 
 \DeclareOption{pdflatex}{\pdflatextrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}} 
-\ProcessOptions\LoadClass[a4paper,twoside,openright]{report} 
+\ProcessOptions\LoadClass[a4paper,openright]{report} 
 
 \RequirePackage{times}
 \RequirePackage[T1]{fontenc}
@@ -135,19 +135,7 @@ Supervisor: & {\itshape \@supervisor}\\
 
 \clearpage \titlepage
 
-\vspace*{15cm} \vfill
-\begin{flushright} 
-\begin{minipage}[!h]{10cm}
-{\Large\itshape \@acknowledgements}
-\end{minipage}
-\end{flushright}
-
-\clearpage
-\thispagestyle{empty}
-\vspace*{15cm} \vfill
-\clearpage
-
-\setcounter{page}{5}
+\setcounter{page}{3}
 
 }
 
