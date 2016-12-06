@@ -2,4 +2,6 @@
 *.log
 *.run.xml
 *.toc
+*.bbl
+*.blg
 *-blx.bib
