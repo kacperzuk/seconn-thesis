@@ -1,4 +1,10 @@
 \chapter{Charakterystyka platformy sprzętowej}
 \label{cha:hardware}
 
-Mikropocesory Atmel AVR są w większości 8-bitowe i na takich skupia się ta praca. Rodzina AVR jest dość szeroka, od ATtiny4 z 32B SRAM~\cite{Attiny4} do ATxmega384C3 z 32KB SRAM~\cite{Atxmega384}. 
+Mikropocesory Atmel AVR są w większości 8-bitowe i na takich skupia się ta praca. Rodzina AVR jest dość szeroka, od ATtiny4 z 32 bajtami SRAM \emph{(ang. Static Random Access Memory)}~\cite{Attiny4} do ATxmega384C3 z 32 kilobajtami SRAM~\cite{Atxmega384}. W pracy wykorzystywany był model ATmega32u4 z 2.5 kilobajta SRAM~\cite{Atmega32}.
+
+To właśnie SRAM jest głównym ograniczeniem -- 32 bajty nie są wystaczające do przeprowadzania operacji, przy których sam klucz zajmuje 16 lub 32 bajty. Należy też pamiętać, że obsługa bezpiecznego połączenia nie może zajmować całości pamięci. Część musi zostać na obsługę peryferiów oraz właściwą logikę programu.
+
+Nie bez znaczenia jest też wielkość domyślnych buforów. Dla przykładu Arduino w modułach Serial oraz SoftwareSerial domyślnie używa 16- lub 64-bajtowego (w zależności od ilości dostępnej pamięci) buforu na przychodzące dane~\footnote{https://github.com/arduino/Arduino/blob/master/hardware/arduino/avr/cores/arduino/HardwareSerial.h}. Przy wiadomościach dłuższych niż 64 bajny oznacza to, że zbyt długie przetwarzanie jednej wiadomości spowoduje błędne odebranie następnej, jeżeli zostanie ona za szybko wysłana.
+
+FIXME tutaj jeszcze cos o taktowaniu procesora.
