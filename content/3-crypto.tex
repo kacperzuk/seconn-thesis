@@ -1,17 +1,43 @@
 \chapter{Metody uwierzytelniania}
 \label{cha:metodyUwierzytelniania}
 
+W zależności od potrzeb i ograniczeń stosuje się różne metody uwierzytelniania podmiotów w komunikacji. Wyróżnić należy uwierzytelnianie przy pomocy kryptografii asymetrycznej, w której używana jest para matematycznie związanych ze sobą kluczy, oraz uwierzytelnianie przy pomocy kryptografii symetrycznej, w której używany jest jeden, współdzielony, tajny klucz.
+
+Klucze w przypadku kryptografii asymetrycznej muszą posiadać konkretne właściwości. W przypadku RSA bezpieczeństwo polega na trudności w faktoryzowaniu dużych liczb, co wymaga stosowania kluczy co najmniej 2048 bitowych~\cite{Nist}. Klucze w przypadku kryptografii symetrycznej nie muszą mieć konkretnych właściwości poza ich nieprzewidywalnością.
+
+Ważną różnicą jest też wydajność. Kryptografia asymetryczna jest dużo bardziej złożona obliczeniowo od symetrycznej~\cite{al2008comparative}. Jest to szczególnie istotne na ograniczonych sprzętowo systemach wbudowanych. Przewagą kryptografii asymetrycznej jest jednak brak konieczności ustalenia wspólnego klucza przed rozpoczęciem komunikacji, jak ma to miejsce w przypadku kryptografii symetrycznej.
+
+Zalecanym rozwiązaniem jest najpierw ustalenie wspólnego, tajnego klucza przy użyciu kryptografii asymetrycznej, a następnie użycie tego klucza do kryptografii symetrycznej~\cite{al2008comparative}.
+
 \section{Kryptografia asymetryczna}
 \label{sec:kryptoAsym}
 
-RSA
-ECC
-ElGamal
-DSA
+Przy wyborze algorytmu dla potrzeb pracy istotne były:
 
-Czym sie charakteryzuja, kto je rekomenduje i dlaczego.
+\begin{itemize}
+\item jakość implementacji dostępnych na mikroprocesory AVR,
+\item złożoność obliczeniowa (niższa jest lepsza),
+\item długość klucza wymagana do zapewnienia niezbędnego poziomu bezpieczeństwa.
+\end{itemize}
 
+Biblioteka \emph{AVR-Crypto-Lib} dostarcza implementację algorytmów RSA oraz DSA\footnote{\url{https://trac.cryptolib.org/avr-crypto-lib/browser}}. Biblioteka \emph{Emsign} dostarcza implementację RSA, lecz tylko z 64 bitowym kluczem\footnote{\url{http://www.emsign.nl/}}, co nie jest wystarczające dla zapewnienia bezpieczeństwa. Komercyjna biblioteka \emph{LightCrypt-AVR8-ECC} oraz biblioteka \emph{micro-ecc} dostarczają implementację kryptografii opartej o krzywe eliptyczne\footnote{\url{http://industrial.crypto.cmmsigma.eu/lightcrypt_avr8/lc_avr8_ecc.pl.html}}. Brak jest na rynku implementacji innych algorytmów klucza publicznego. Dostępność implementacji ogranicza wybór algorytmu do RSA, DSA oraz krzywych eliptycznych.
+
+Następnym kryterium jest złożoność obliczeniowa. W analizie przeprowadzonej przez pracowników \emph{Sun Microsystems Laboratories} wykazano, że na mikroprocesorach AVR algorytmy oparte o krzywe eliptyczne są o rząd wielkości szybsze od algorytmu RSA~\cite{Gura2004}.
+
+FIXME
+DSA jest podobne do RSA, wiec tez nie
+
+FIXME
+dlaczego taki a nie inny secp
 https://www.keylength.com/en/4/
+
+FIXME
+ECDH jest fajne
+
+FIXME
+ale nie daje forward secrecy
+
+
 
 \section{Kryptografia symetryczna}
 \label{sec:kryptoSym}
