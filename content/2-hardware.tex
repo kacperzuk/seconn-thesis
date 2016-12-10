@@ -1,9 +1,9 @@
 \chapter{Charakterystyka platformy sprzętowej}
 \label{cha:hardware}
 
-Mikropocesory Atmel AVR są w większości 8-bitowe i na takich skupia się praca. Rodzina AVR jest szeroka, od ATtiny4 z 32 bajtami SRAM \emph{(ang. Static Random Access Memory)}~\cite{Attiny4} do ATxmega384C3 z 32 kilobajtami SRAM~\cite{Atxmega384}. W pracy wykorzystywany był model ATmega32u4 z 2,5 kilobajta SRAM~\cite{Atmega32}.
+Mikropocesory Atmel AVR są w większości 8-bitowe i na takich skupia się praca. Rodzina AVR jest szeroka, od ATtiny4 z 32 bajtami \gls{sram}~\cite{Attiny4} do ATxmega384C3 z 32 kilobajtami \gls{sram}~\cite{Atxmega384}. W pracy wykorzystywany był model ATmega32u4 z 2,5 kilobajta \gls{sram}~\cite{Atmega32}.
 
-SRAM jest głównym ograniczeniem, ponieważ 32 bajty nie są wystaczające do przeprowadzania operacji, przy których sam klucz zajmuje 16 lub 32 bajty. Należy też pamiętać, że obsługa bezpiecznego połączenia nie może zajmować całości pamięci. Część należy przeznaczyć na obsługę peryferiów oraz właściwą logikę programu.
+\gls{sram} jest głównym ograniczeniem, ponieważ 32 bajty nie są wystaczające do przeprowadzania operacji, przy których sam klucz zajmuje 16 lub 32 bajty. Należy też pamiętać, że obsługa bezpiecznego połączenia nie może zajmować całości pamięci. Część należy przeznaczyć na obsługę peryferiów oraz właściwą logikę programu.
 
 Istotnym elementem jest też wielkość domyślnych buforów. \emph{Arduino} w modułach \emph{Serial} oraz \emph{SoftwareSerial} domyślnie używa 16- lub 64-bajtowego (w zależności od ilości dostępnej pamięci) buforu na przychodzące dane\footnote{https://github.com/arduino/Arduino/blob/master/hardware/arduino/avr/cores/arduino/HardwareSerial.h}. Przy wiadomościach dłuższych niż 64 bajty oznacza to, że zbyt długie przetwarzanie jednej wiadomości spowoduje błędne odebranie następnej, jeżeli zostanie ona za szybko wysłana.
 

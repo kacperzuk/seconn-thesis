@@ -1,14 +1,135 @@
 \chapter{Implementacja}
 \label{cha:implementacja}
 
+Implementację wykonano z następującymi założeniami:
+
+\begin{itemize}
+\item pełna funkcjonalność przy jak najmniejszych wymaganiach sprzętowych
+\item niezależność od warstwy sieciowej
+\item zapewnienie uwierzytelniania i szyfrowania wiadomości
+\end{itemize}
+
+\section{Protokół komunikacji}
+\label{sec:proto}
+
+W protokole wymieniane są rekordy o następującej budowie:
+
+\begin{itemize}
+\item piersze dwa bajty definiują wersję protokołu i mają wartość 0x00 0x01,
+\item następny bajt definiuje typ rekordu,
+\item następne dwa bajty definiują długość zawartości rekordu (najbardziej znaczący bajt jako pierwsze),
+\item zawartość rekordu.
+\end{itemize}
+
+Zdefiniowane są następujące typy rekordów.
+
+\begin{itemize}
+\item HelloRequest o wartości 0x00. Długość zawartości tego rekordu to zawsze 64 bajty. Zawartość tego rekordu nie jest zaszyfrowana ani uwierzytelniona.
+\item HelloResponse o wartości 0x01. Długość zawartości tego rekordu to zawsze 128 bajtów. Zawartość tego rekordu jest zaszyfrowana oraz uwierzytelniona.
+\item EncryptedData o wartości 0x02. Długość nie jest zdefiniowana. Zawartość tego rekordu jest zaszyfrowana oraz uwierzytelniona
+\end{itemize}
+
+Odbiorca rekordu powinien zweryfikować:
+
+\begin{itemize}
+\item zgodność wersji protokołu -- wymagane bajty 0x00 oraz 0x01,
+\item prawidłowość bajtu określającego typ rekordu -- wymagana wartość 0x00, 0x01 lub 0x02,
+\item zgodność zadeklarowanej długości zawartości rekordu z typem rekordu,
+\item w przypadku typów HelloResponse oraz EncryptedData -- prawidłowość kodu uwierzytelniającego.
+\end{itemize}
+
+W przypadku niezgodności któregokolwiek elementu rekord powinien zostać zignorowany.
+
+\subsection{Nawiązywanie połączenia}
+
+\begin{figure}
+\centering
+\begin{BVerbatim}
+Nawiązujący połączenie              Odbierający połączenie
+        +                                       +
+        |   HelloRequest                        |
+   1.   | +-----------------------------------> |
+        |                                       |
+        |                                       |
+        |                        HelloRequest   |
+   2.   | <-----------------------------------+ |
+        |                                       |
+        |                                       |
+        |   HelloResponse                       |
+   3.   | +-----------------------------------> |
+        |                                       |
+        |                                       |
+        |                       HelloResponse   |
+   4.   | <-----------------------------------+ |
+        +                                       +
+\end{BVerbatim}
+\caption{Kolejność wymiany rekordów w procesie nawiązywania połączenia}
+\label{fig:handshake}
+\end{figure}
+
+Kolejność przesyłania rekordów w celu nawiązania połączenia przedstawiona jest na Rys.~\ref{fig:handshake}. Rekordy HelloRequest zawierają klucz publiczny węzła, który je wysyła. Węzeł, który odbiera HelloRequest używa swojego klucza publicznego, oraz klucza publicznego z odebranego rekordu do ustalenia sekretnego klucza.
+
+Po ustaleniu wspólnego klucza węzły mogą wysłać rekord HelloResponse, który zawiera zaszyfrowany i uwierzytelniony klucz publiczny węzła wysyłającego rekord. Jeżeli węzeł odbierający rekord jest w stanie potwierdzić, że rekord jest prawidłowo uwierzytelniony, a zdeszyfrowany klucz publiczny pokrywa się z kluczem przesłanym wcześniej w rekordzie HelloRequest, połączenie uznawane jest za nawiązane. Po nawiązaniu połączenia wymieniane mogą być tylko rekordy typu EncryptedData.
+
 \section{Generowanie współdzielonego klucza}
 \label{sec:sharedkey}
 
-\section{Szyfrowanie wiadomości}
+Każdy z węzłów po odebraniu rekordu HelloRequest używa odebranego klucza publicznego oraz swojego klucza publicznego do ustalenia wspólnego sekretu przy użyciu algorytmu \gls{ecdh} oraz proponowanej przez \gls{nist} krzywej eliptycznej P-256~\cite{kerry2013digital} (w RFC 5480 nazwaną krzywą secp256r1~\cite{turner2009elliptic}).
+
+Z sekretu będącego wynikiem algorytmu \gls{ecdh} liczony jest skrót przy użyciu algorytmu SHA-256. Następnie jest on dzielony na dwie części po 128-bitów. Pierwsza część staje się współdzielonym kluczem używanym do szyfrowania, druga część staje się współdzielonym kluczem używanym do uwierzytelniania.
+
+Implementacja algorytmu \gls{ecdh} z krzywą eliptyczną P-256 pochodzi z biblioteki \emph{micro-ecc}. Jest to jedyna darmowa biblioteka implementująca \gls{ecdh}.
+
+\section{Szyfrowanie i deszyfrowanie wiadomości}
 \label{sec:encrypt}
+
+Szyfrowanie wiadomości odbywa się za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{cbc}. Wektor inicjalizacyjny jest losowy i dołączany przed szyfrogramem. Tekst jawny jest dopełniany do pełnego bloku według algorytmu zdefiniowanego w PKCS\#7~\cite{kaliski1998pkcs}.
+
+Właściwe kroki potrzebne do zaszyfrowania wiadomości:
+
+\begin{enumerate}
+\item dopełnienie tekstu jawnego do pełnego bloku
+\begin{itemize} 
+\item jeżeli długość tekstu jawnego jest wielokrotnością długości bloku, do tekstu jawnego doklejone musi być 128 bajtów o wartości 128.
+\item w przeciwnym wypadku, gdy wymagane jest dopełnienie $ N $ bajtów, do tekstu jawnego doklejone musi być $ N $ bajtów o wartości $ N $.
+\end{itemize}
+\item zaszyfrowanie dopełnionego tekstu jawnego w trybie \gls{cbc} z losowym wektorem inicjalizacyjnym
+\item doklejenie przed szyfrogramem wektora inicjalizacyjnego
+\end{enumerate}
+
+Właściwe kroki potrzebne do odszyfrowania wiadomości:
+
+\begin{enumerate}
+\item oddzielenie wektora inicjalizacyjnego od szyfrogramu
+\item zdeszyfrowanie szyfrogramu w trybu \gls{cbc} korzystając z oddzielonego wektora inicjalizacyjnego
+\item pobranie wartości ostatniego bajtu zdeszyfrowanego ciągu
+\begin{itemize}
+    \item wartość ta nazywana jest dalej $ N $
+\end{itemize}
+\item zweryfikowanie poprawności dopełnienia
+\begin{itemize}
+\item ostatnie $ N $ bajtów musi mieć wartość $ N $
+\item jeżeli dopełnienie jest nieprawidłowe, cały rekord jest ignorowany
+\end{itemize}
+\item usunięcie ostatnich $ N $ bajtów
+\end{enumerate}
+
+Implementacja algorytmu AES pochodzi z biblioteki \emph{AVR-Crypto-Lib}. Jest to najlepiej udokumentowana, darmowa biblioteka implementująca algorytm AES. Implementacja trybu \gls{cbc} oraz algorytmu dopełniania została zrealizowana w ramach pracy.
 
 \section{Uwierzytelnienie wiadomości}
 \label{sec:auth}
 
-\section{Protokół komunikacji}
-\label{sec:proto}
+Szyfrowanie wiadomości odbywa się za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{ecbcmac}. Wektor inicjalizacyjny wypełniony jest zerami i nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z wektorem inicjalizacyjnym użytym do szyfrowania, a nie tekst jawny. Długość szyfrogramu wraz z wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a więc nie jest stosowane dopełnianie.
+
+Tryb \gls{ecbcmac} to tryb \gls{cbcmac}, którego wynik jest dodatkowo szyfrowany innym kluczem niż ten użyty do \gls{cbcmac}. W tej pracy do \gls{cbcmac} użyty jest klucz służący do uwierzytelniania, a wynik \gls{cbcmac} jest zaszyfrowany używając klucza służącego do szyfrowania.
+
+Właściwe kroki potrzebne do obliczenia kodu uwierzytelniającego:
+
+\begin{enumerate}
+\item obliczenie ostatniego bloku będącego wynikiem zaszyfrowania szyfrogramu w trybie \gls{cbc} z wektorem inicjalizacyjnym wypełnionym zerami przy użyciu klucza przeznaczonego do uwierzytelniania
+\item zaszyfrowanie bloku korzystająć z AES i klucza przeznaczonego do szyfrowania
+\end{enumerate}
+
+Węzeł wysyłający dokleja kod uwierzytelniający przed szyfrogramem. Węzeł odbierający oddziela otrzymany kod od szyfrogramu, oblicza kod uwierzytelniający dla danego szyfrogramu i porównuje, czy zgadza się on z kodem otrzymanym. Jeżeli kod obliczony różni się od kodu otrzymanego, cały rekord jest ignorowany.
+
+Implementacja trybu \gls{ecbcmac} została zrealizowana w ramach pracy.
