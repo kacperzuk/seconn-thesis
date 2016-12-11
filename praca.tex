@@ -1,4 +1,4 @@
-\documentclass[twoside,11pt]{aghdpl}
+\documentclass[oneside,11pt]{aghdpl}
 
 % \documentclass[oneside,11pt]{aghdpl}
 % \documentclass[en,11pt]{aghdpl}  % praca w języku angielskim
@@ -19,6 +19,7 @@
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{fancyvrb}
+% \usepackage[nottoc,notlot,notlof]{tocbibind}
 \usepackage[acronyms]{glossaries}
 \makeglossaries
 \loadglsentries[main]{acronyms}
@@ -182,6 +183,6 @@
 % itd.
 
 \listoffigures
-\printbibliography
+\printbibliography[heading=bibintoc]
 
 \end{document}
