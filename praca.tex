@@ -23,6 +23,19 @@
 \makeglossaries
 \loadglsentries[main]{acronyms}
 
+\makeatletter
+\newcommand{\setappendix}{Dodatek~\thechapter.~}
+\newcommand{\setchapter}{\thechapter~}
+\titleformat{\chapter}{\bfseries\LARGE}{%
+  \ifnum\pdfstrcmp{\@currenvir}{appendices}=0
+    \setappendix
+  \else
+    \setchapter
+  \fi}{0em}{}
+\makeatother
+\usepackage[titletoc]{appendix}
+
+
 % --- < bibliografia > ---
 
 \usepackage[
@@ -147,6 +160,8 @@
 \setcounter{secnumdepth}{4}
 \brokenpenalty=10000\relax
 
+%\newcommand*{\thead}[1]{\multicolumn{1}{c}{\bfseries #1}}
+
 \begin{document}
 
 \titlepages
@@ -175,13 +190,15 @@
 \include{content/5-walidacja}
 \include{content/6-podsumowanie}
 
+% \listoffigures
+\printbibliography[heading=bibintoc]
+
 % itd.
-% \appendix
-% \include{dodatekA}
+\begin{appendices}
+\include{content/zalacznikA}
+\end{appendices}
 % \include{dodatekB}
 % itd.
 
-\listoffigures
-\printbibliography[heading=bibintoc]
 
 \end{document}

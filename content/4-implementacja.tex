@@ -1,7 +1,7 @@
 \chapter{Implementacja protokołu komunikacji}
 \label{cha:implementacja}
 
-Implementację protokołu komunikacji między dwoma węzłami wykonano z następującymi założeniami:
+Protokół komunikacji między dwoma węzłami zaprojektowano i zaimplementowano z następującymi założeniami:
 
 \begin{itemize}
 \item pełna funkcjonalność przy jak najmniejszych wymaganiach sprzętowych
@@ -12,22 +12,39 @@ Implementację protokołu komunikacji między dwoma węzłami wykonano z nastę
 \section{Podstawowe struktury protokołu}
 \label{sec:proto}
 
-W protokole wymieniane są rekordy o następującej budowie:
+W protokole wymieniane są rekordy, których zawartość poprzedzona jest nagłówkiem o następującej budowie:
 
 \begin{itemize}
 \item piersze dwa bajty definiują wersję protokołu i mają wartość 0x00 0x01,
 \item następny bajt definiuje typ rekordu,
-\item następne dwa bajty definiują długość zawartości rekordu (najbardziej znaczący bajt jako pierwsze),
-\item zawartość rekordu.
+\item następne dwa bajty definiują długość zawartości rekordu (najbardziej znaczący bajt jako pierwszy).
 \end{itemize}
 
-Zdefiniowane są następujące typy rekordów.
+\begin{table}[t]
+\centering
+\begin{tabular}{|l|p{1.4cm}|l|p{2.9cm}|p{3.1cm}|}
+    \hline
+    \textbf{Nazwa rekordu}  &
+    \textbf{Wartość pola typ}  &
+    \textbf{Długość zawartości}  &
+    \textbf{Czy zawartość jest zaszyfrowana}  &
+    \textbf{Czy zawartość jest uwierzytelniona}\\
+    \hline
+    HelloRequest & 0x00 & 64 bajty & nie & nie\\
+    \hline
+    HelloResponse & 0x01 & 96 bajtów & tak & tak\\
+    \hline
+    EncryptedData & 0x02 & zmienna, minimum 32 bajty & tak & tak\\
+    \hline
+\end{tabular}
+\caption{Typy rekordów wraz z ich charakterystyką}
+\label{tab:recordtypes}
+\end{table}
 
-\begin{itemize}
-\item HelloRequest o wartości 0x00. Długość zawartości tego rekordu to zawsze 64 bajty. Zawartość tego rekordu nie jest zaszyfrowana ani uwierzytelniona.
-\item HelloResponse o wartości 0x01. Długość zawartości tego rekordu to zawsze 128 bajtów. Zawartość tego rekordu jest zaszyfrowana oraz uwierzytelniona.
-\item EncryptedData o wartości 0x02. Długość nie jest zdefiniowana. Zawartość tego rekordu jest zaszyfrowana oraz uwierzytelniona
-\end{itemize}
+
+Zdefiniowane typy rekordów zostały przedstawione w tabeli \ref{tab:recordtypes}.
+
+Budowę przykładowych rekordów przedstawiono na rysunkach \ref{fig:hellorequestsample}, \ref{fig:helloresponsesample} oraz \ref{fig:encrypteddatasample} (Załącznik \ref{app:samplerecords}).
 
 Odbiorca rekordu powinien zweryfikować:
 
@@ -67,7 +84,7 @@ Nawiązujący połączenie              Odbierający połączenie
 \label{fig:handshake}
 \end{figure}
 
-Kolejność przesyłania rekordów w celu nawiązania połączenia przedstawiona jest na Rys.~\ref{fig:handshake}. Rekordy HelloRequest zawierają klucz publiczny węzła, który je wysyła. Węzeł, który odbiera HelloRequest używa swojego klucza publicznego, oraz klucza publicznego z odebranego rekordu do ustalenia sekretnego klucza.
+Kolejność przesyłania rekordów w celu nawiązania połączenia przedstawiona jest na rysunku~\ref{fig:handshake}. Rekordy HelloRequest zawierają klucz publiczny węzła, który je wysyła. Węzeł, który odbiera HelloRequest używa swojego klucza publicznego oraz klucza publicznego z odebranego rekordu do ustalenia sekretnego klucza.
 
 Po ustaleniu wspólnego klucza węzły mogą wysłać rekord HelloResponse, który zawiera zaszyfrowany i uwierzytelniony klucz publiczny węzła wysyłającego rekord. Jeżeli węzeł odbierający rekord jest w stanie potwierdzić, że rekord jest prawidłowo uwierzytelniony, a zdeszyfrowany klucz publiczny pokrywa się z kluczem przesłanym wcześniej w rekordzie HelloRequest, połączenie uznawane jest za nawiązane. Po nawiązaniu połączenia wymieniane mogą być tylko rekordy typu EncryptedData.
 
@@ -89,7 +106,7 @@ Właściwe kroki potrzebne do zaszyfrowania wiadomości:
 
 \begin{enumerate}
 \item dopełnienie tekstu jawnego do pełnego bloku
-\begin{itemize} 
+\begin{itemize}
 \item jeżeli długość tekstu jawnego jest wielokrotnością długości bloku, do tekstu jawnego doklejone musi być 128 bajtów o wartości 128.
 \item w przeciwnym wypadku, gdy wymagane jest dopełnienie $ N $ bajtów, do tekstu jawnego doklejone musi być $ N $ bajtów o wartości $ N $.
 \end{itemize}
@@ -101,7 +118,7 @@ Właściwe kroki potrzebne do odszyfrowania wiadomości:
 
 \begin{enumerate}
 \item oddzielenie wektora inicjalizacyjnego od szyfrogramu
-\item zdeszyfrowanie szyfrogramu w trybu \gls{cbc} korzystając z oddzielonego wektora inicjalizacyjnego
+\item zdeszyfrowanie szyfrogramu w trybu \gls{cbc} przy wykorzystaniu oddzielonego wektora inicjalizacyjnego
 \item pobranie wartości ostatniego bajtu zdeszyfrowanego ciągu
 \begin{itemize}
     \item wartość ta nazywana jest dalej $ N $
@@ -127,7 +144,7 @@ Właściwe kroki potrzebne do obliczenia kodu uwierzytelniającego:
 
 \begin{enumerate}
 \item obliczenie ostatniego bloku będącego wynikiem zaszyfrowania szyfrogramu w trybie \gls{cbc} z wektorem inicjalizacyjnym wypełnionym zerami przy użyciu klucza przeznaczonego do uwierzytelniania
-\item zaszyfrowanie bloku korzystająć z AES i klucza przeznaczonego do szyfrowania
+\item zaszyfrowanie bloku przy wykorzystaniu AES i klucza przeznaczonego do szyfrowania
 \end{enumerate}
 
 Węzeł wysyłający dokleja kod uwierzytelniający przed szyfrogramem. Węzeł odbierający oddziela otrzymany kod od szyfrogramu, oblicza kod uwierzytelniający dla danego szyfrogramu i porównuje, czy zgadza się on z kodem otrzymanym. Jeżeli kod obliczony różni się od kodu otrzymanego, cały rekord jest ignorowany.
