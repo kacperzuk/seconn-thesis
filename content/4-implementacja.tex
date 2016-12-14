@@ -1,7 +1,7 @@
-\chapter{Implementacja}
+\chapter{Implementacja protokołu komunikacji}
 \label{cha:implementacja}
 
-Implementację wykonano z następującymi założeniami:
+Implementację protokołu komunikacji między dwoma węzłami wykonano z następującymi założeniami:
 
 \begin{itemize}
 \item pełna funkcjonalność przy jak najmniejszych wymaganiach sprzętowych
@@ -9,7 +9,7 @@ Implementację wykonano z następującymi założeniami:
 \item zapewnienie uwierzytelniania i szyfrowania wiadomości
 \end{itemize}
 
-\section{Protokół komunikacji}
+\section{Podstawowe struktury protokołu}
 \label{sec:proto}
 
 W protokole wymieniane są rekordy o następującej budowie:
@@ -40,7 +40,7 @@ Odbiorca rekordu powinien zweryfikować:
 
 W przypadku niezgodności któregokolwiek elementu rekord powinien zostać zignorowany.
 
-\subsection{Nawiązywanie połączenia}
+\section{Nawiązywanie połączenia}
 
 \begin{figure}
 \centering
