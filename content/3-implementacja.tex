@@ -114,6 +114,8 @@ Właściwe kroki potrzebne do zaszyfrowania wiadomości:
 \item doklejenie przed szyfrogramem wektora inicjalizacyjnego
 \end{enumerate}
 
+Kod implementujący szyfrowanie wiadomości przedstawiono w listingu~\ref{lst:encrypt} w dodatku~\ref{app:codesamples}.
+
 Właściwe kroki potrzebne do odszyfrowania wiadomości:
 
 \begin{enumerate}
@@ -130,6 +132,8 @@ Właściwe kroki potrzebne do odszyfrowania wiadomości:
 \end{itemize}
 \item usunięcie ostatnich $ N $ bajtów
 \end{enumerate}
+
+Kod implementujący odszyfrowanie wiadomości przedstawiono w listingu~\ref{lst:decrypt} w dodatku~\ref{app:codesamples}.
 
 Implementacja algorytmu AES pochodzi z biblioteki \emph{AVR-Crypto-Lib}. Jest to najlepiej udokumentowana, darmowa biblioteka implementująca algorytm AES. Implementacja trybu \gls{cbc} oraz algorytmu dopełniania została zrealizowana w ramach pracy.
 
