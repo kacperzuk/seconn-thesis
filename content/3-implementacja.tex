@@ -4,9 +4,9 @@
 Protokół komunikacji między dwoma węzłami zaprojektowano i zaimplementowano z następującymi założeniami:
 
 \begin{itemize}
-\item pełna funkcjonalność przy jak najmniejszych wymaganiach sprzętowych
-\item niezależność od warstwy sieciowej
-\item zapewnienie uwierzytelniania i szyfrowania wiadomości
+\item pełna funkcjonalność przy jak najmniejszych wymaganiach sprzętowych,
+\item niezależność od warstwy sieciowej,
+\item zapewnienie uwierzytelniania i szyfrowania wiadomości.
 \end{itemize}
 
 \section{Podstawowe struktury protokołu}
@@ -15,8 +15,8 @@ Protokół komunikacji między dwoma węzłami zaprojektowano i zaimplementowano
 W protokole wymieniane są rekordy, których zawartość poprzedzona jest nagłówkiem o następującej budowie:
 
 \begin{itemize}
-\item piersze dwa bajty definiują wersję protokołu i mają wartość 0x00 0x01,
-\item następny bajt definiuje typ rekordu,
+\item piersze dwa bajty definiują wersję protokołu i mają wartość 0x00 oraz 0x01,
+\item trzeci bajt definiuje typ rekordu,
 \item następne dwa bajty definiują długość zawartości rekordu (najbardziej znaczący bajt jako pierwszy).
 \end{itemize}
 
@@ -42,9 +42,9 @@ W protokole wymieniane są rekordy, których zawartość poprzedzona jest nagł
 \end{table}
 
 
-Zdefiniowane typy rekordów zostały przedstawione w tabeli \ref{tab:recordtypes}.
+Zdefiniowane typy rekordów są przedstawione w tabeli \ref{tab:recordtypes}.
 
-Budowę przykładowych rekordów przedstawiono na rysunkach \ref{fig:hellorequestsample}, \ref{fig:helloresponsesample} oraz \ref{fig:encrypteddatasample} w dodateku \ref{app:samplerecords}).
+Budowę przykładowych rekordów przedstawiono na rysunkach \ref{fig:hellorequestsample}, \ref{fig:helloresponsesample} oraz \ref{fig:encrypteddatasample} w dodatku \ref{app:samplerecords}.
 
 Odbiorca rekordu powinien zweryfikować:
 
@@ -84,9 +84,11 @@ Nawiązujący połączenie              Odbierający połączenie
 \label{fig:handshake}
 \end{figure}
 
-Kolejność przesyłania rekordów w celu nawiązania połączenia przedstawiona jest na rysunku~\ref{fig:handshake}. Rekordy HelloRequest zawierają klucz publiczny węzła, który je wysyła. Węzeł, który odbiera HelloRequest używa swojego klucza publicznego oraz klucza publicznego z odebranego rekordu do ustalenia sekretnego klucza.
+Kolejność przesyłania rekordów w celu nawiązania połączenia przedstawiona jest na rysunku~\ref{fig:handshake}. Rekordy typu HelloRequest zawierają klucz publiczny węzła, który je wysyła. Węzeł, który odbiera HelloRequest używa swojego klucza publicznego oraz klucza publicznego z odebranego rekordu do ustalenia sekretnego klucza.
 
-Po ustaleniu wspólnego klucza węzły mogą wysłać rekord HelloResponse, który zawiera zaszyfrowany i uwierzytelniony klucz publiczny węzła wysyłającego rekord. Jeżeli węzeł odbierający rekord jest w stanie potwierdzić, że rekord jest prawidłowo uwierzytelniony, a zdeszyfrowany klucz publiczny pokrywa się z kluczem przesłanym wcześniej w rekordzie HelloRequest, połączenie uznawane jest za nawiązane. Po nawiązaniu połączenia wymieniane mogą być tylko rekordy typu EncryptedData.
+Po ustaleniu wspólnego klucza węzły mogą wysłać rekord HelloResponse, który zawiera zaszyfrowany i uwierzytelniony klucz publiczny węzła wysyłającego rekord. Jeżeli węzeł odbierający rekord skutecznie potwierdzi, że rekord jest prawidłowo uwierzytelniony, a zdeszyfrowany klucz publiczny pokrywa się z kluczem przesłanym wcześniej w rekordzie HelloRequest, połączenie uznawane jest za nawiązane. Po nawiązaniu połączenia wymieniane mogą być tylko rekordy typu EncryptedData.
+
+Istotne jest, że protokół nie zapewnia autentyczności danego klucza publicznego. Powinno to zostać zweryfikowane niezależnie, np. poprzez wyświetlenie skrótu klucza użytkownikowi i poproszenie o zweryfikowanie, że na obu urządzeniach uczestniczących w komunikacji jest wyświetlony taki sam klucz.
 
 \section{Generowanie współdzielonego klucza}
 \label{sec:sharedkey}
@@ -100,18 +102,18 @@ Implementacja algorytmu \gls{ecdh} z krzywą eliptyczną P-256 pochodzi z biblio
 \section{Szyfrowanie i deszyfrowanie wiadomości}
 \label{sec:encrypt}
 
-Szyfrowanie wiadomości odbywa się za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{cbc}. Wektor inicjalizacyjny jest losowy i dołączany przed szyfrogramem. Tekst jawny jest dopełniany do pełnego bloku według algorytmu zdefiniowanego w PKCS\#7~\cite{kaliski1998pkcs}.
+Szyfrowanie wiadomości odbywa się za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{cbc}. Wektor inicjalizacyjny jest losowy i dołączany do zawartości przesyłanego rekordu przed szyfrogramem. Tekst jawny jest dopełniany do pełnego bloku według algorytmu zdefiniowanego w PKCS\#7~\cite{kaliski1998pkcs}.
 
-Właściwe kroki potrzebne do zaszyfrowania wiadomości:
+Właściwe kroki potrzebne do zaszyfrowania wiadomości wypisano poniżej.
 
 \begin{enumerate}
-\item dopełnienie tekstu jawnego do pełnego bloku
+\item Dopełnienie tekstu jawnego do pełnego bloku:
 \begin{itemize}
-\item jeżeli długość tekstu jawnego jest wielokrotnością długości bloku, do tekstu jawnego doklejone musi być 128 bajtów o wartości 128.
+\item jeżeli długość tekstu jawnego jest wielokrotnością długości bloku, do tekstu jawnego doklejone musi być 16 bajtów o wartości 16,
 \item w przeciwnym wypadku, gdy wymagane jest dopełnienie $ N $ bajtów, do tekstu jawnego doklejone musi być $ N $ bajtów o wartości $ N $.
 \end{itemize}
-\item zaszyfrowanie dopełnionego tekstu jawnego w trybie \gls{cbc} z losowym wektorem inicjalizacyjnym
-\item doklejenie przed szyfrogramem wektora inicjalizacyjnego
+\item Zaszyfrowanie dopełnionego tekstu jawnego w trybie \gls{cbc} z losowym wektorem inicjalizacyjnym.
+\item Doklejenie wektora inicjalizacyjnego przed szyfrogramem.
 \end{enumerate}
 
 Kod implementujący szyfrowanie wiadomości przedstawiono w listingu~\ref{lst:encrypt} w dodatku~\ref{app:codesamples}.
