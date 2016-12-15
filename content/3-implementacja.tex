@@ -142,7 +142,7 @@ Implementacja algorytmu AES pochodzi z biblioteki \emph{AVR-Crypto-Lib}. Jest to
 \section{Uwierzytelnienie wiadomości}
 \label{sec:auth}
 
-Uwierzytelnienie wiadomości odbywa się poprzez dodanie do wiadomości \gls{mac}. \gls{mac} dla danej wiadomości tworzony jest za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{ecbcmac}. Wektor inicjalizacyjny wypełniony jest zerami i nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z wektorem inicjalizacyjnym użytym do szyfrowania, a nie tekst jawny. Długość szyfrogramu wraz z wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a więc nie jest stosowane dopełnianie.
+Uwierzytelnienie wiadomości odbywa się poprzez dołączenie do wiadomości \gls{mac}. \gls{mac} dla danej wiadomości tworzony jest za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{ecbcmac}. Wektor inicjalizacyjny wypełniony jest zerami i nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z wektorem inicjalizacyjnym użytym do szyfrowania, a nie tekst jawny. Długość szyfrogramu wraz z wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a więc nie jest stosowane dopełnianie.
 
 Tryb \gls{ecbcmac} to tryb \gls{cbcmac}, którego wynik jest dodatkowo szyfrowany innym kluczem niż ten użyty do \gls{cbcmac}. W tej pracy do \gls{cbcmac} użyty jest klucz służący do uwierzytelniania, a wynik \gls{cbcmac} jest szyfrowany używając klucza służącego do szyfrowania.
 
