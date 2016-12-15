@@ -79,3 +79,29 @@ size_t _seconn_crypto_decrypt(void *destination, void *source, size_t length, ae
 }
 \end{lstlisting}
 \end{figure}
+
+\begin{figure}
+\begin{lstlisting}[caption={Obliczanie \gls{mac} dla wiadomości},label={lst:mac}]
+void _seconn_crypto_calculate_mac(uint8_t *mac, void *message,
+size_t length, aes128_key_t mac_key, aes128_key_t enc_key) {
+    memset(&ctx, 0, sizeof(aes128_ctx_t));
+    aes128_init(mac_key, &ctx);
+
+    uint8_t *block = mac;
+
+    memset(block, 0, 16); // wektor inicjalizacyjny wypełniony zerami
+
+    // obliczenie ostatniego bloku szyfrowania w trybie CBC
+    size_t i = 0;
+    for(; i+16 <= length; i += 16) {
+        _seconn_crypto_xor_block(block, ((uint8_t*)message)+i);
+        aes128_enc(block, &ctx);
+    }
+
+    // szyfrowanie ostatniego bloku osobnym kluczem
+    memset(&ctx, 0, sizeof(aes128_ctx_t));
+    aes128_init(enc_key, &ctx);
+    aes128_enc(block, &ctx);
+}
+\end{lstlisting}
+\end{figure}

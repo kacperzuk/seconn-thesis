@@ -84,16 +84,16 @@ Nawiązujący połączenie              Odbierający połączenie
 \label{fig:handshake}
 \end{figure}
 
-Kolejność przesyłania rekordów w celu nawiązania połączenia przedstawiona jest na rysunku~\ref{fig:handshake}. Rekordy typu HelloRequest zawierają klucz publiczny węzła, który je wysyła. Węzeł, który odbiera HelloRequest używa swojego klucza publicznego oraz klucza publicznego z odebranego rekordu do ustalenia sekretnego klucza.
+Kolejność przesyłania rekordów w celu nawiązania połączenia przedstawiona jest na rysunku~\ref{fig:handshake}. Rekordy typu HelloRequest zawierają klucz publiczny węzła, który je wysyła. Węzeł, który odbiera HelloRequest, używa swojego klucza publicznego oraz klucza publicznego z odebranego rekordu do ustalenia sekretnego klucza.
 
 Po ustaleniu wspólnego klucza węzły mogą wysłać rekord HelloResponse, który zawiera zaszyfrowany i uwierzytelniony klucz publiczny węzła wysyłającego rekord. Jeżeli węzeł odbierający rekord skutecznie potwierdzi, że rekord jest prawidłowo uwierzytelniony, a zdeszyfrowany klucz publiczny pokrywa się z kluczem przesłanym wcześniej w rekordzie HelloRequest, połączenie uznawane jest za nawiązane. Po nawiązaniu połączenia wymieniane mogą być tylko rekordy typu EncryptedData.
 
-Istotne jest, że protokół nie zapewnia autentyczności danego klucza publicznego. Powinno to zostać zweryfikowane niezależnie, np. poprzez wyświetlenie skrótu klucza użytkownikowi i poproszenie o zweryfikowanie, że na obu urządzeniach uczestniczących w komunikacji jest wyświetlony taki sam klucz.
+Istotne jest, że protokół nie zapewnia autentyczności danego klucza publicznego. Powinno to zostać zweryfikowane niezależnie, na przykład poprzez wyświetlenie skrótu klucza użytkownikowi i poproszenie go o potwierdzenie, że na obu urządzeniach uczestniczących w komunikacji jest wyświetlony taki sam klucz.
 
 \section{Generowanie współdzielonego klucza}
 \label{sec:sharedkey}
 
-Każdy z węzłów po odebraniu rekordu HelloRequest używa odebranego klucza publicznego oraz swojego klucza publicznego do ustalenia wspólnego sekretu przy użyciu algorytmu \gls{ecdh} oraz proponowanej przez \gls{nist} krzywej eliptycznej P-256~\cite{kerry2013digital} (w RFC 5480 nazwaną krzywą secp256r1~\cite{turner2009elliptic}).
+Każdy z węzłów po odebraniu rekordu typu HelloRequest używa odebranego klucza publicznego oraz swojego klucza publicznego do ustalenia wspólnego sekretu przy użyciu algorytmu \gls{ecdh} oraz proponowanej przez \gls{nist} krzywej eliptycznej P-256~\cite{kerry2013digital} (w RFC 5480 nazwaną krzywą secp256r1~\cite{turner2009elliptic}).
 
 Z sekretu będącego wynikiem algorytmu \gls{ecdh} liczony jest skrót przy użyciu algorytmu SHA-256. Następnie jest on dzielony na dwie części po 128-bitów. Pierwsza część staje się współdzielonym kluczem używanym do szyfrowania, druga część staje się współdzielonym kluczem używanym do uwierzytelniania.
 
@@ -118,41 +118,43 @@ Właściwe kroki potrzebne do zaszyfrowania wiadomości wypisano poniżej.
 
 Kod implementujący szyfrowanie wiadomości przedstawiono w listingu~\ref{lst:encrypt} w dodatku~\ref{app:codesamples}.
 
-Właściwe kroki potrzebne do odszyfrowania wiadomości:
+Właściwe kroki potrzebne do odszyfrowania wiadomości wypisano poniżej.
 
 \begin{enumerate}
-\item oddzielenie wektora inicjalizacyjnego od szyfrogramu
-\item zdeszyfrowanie szyfrogramu w trybu \gls{cbc} przy wykorzystaniu oddzielonego wektora inicjalizacyjnego
-\item pobranie wartości ostatniego bajtu zdeszyfrowanego ciągu
+\item Oddzielenie wektora inicjalizacyjnego od szyfrogramu.
+\item Zdeszyfrowanie szyfrogramu w trybu \gls{cbc} przy wykorzystaniu oddzielonego wektora inicjalizacyjnego.
+\item Pobranie wartości ostatniego bajtu zdeszyfrowanego ciągu:
 \begin{itemize}
-    \item wartość ta nazywana jest dalej $ N $
+    \item wartość ta nazywana jest dalej $ N $.
 \end{itemize}
-\item zweryfikowanie poprawności dopełnienia
+\item Zweryfikowanie poprawności dopełnienia:
 \begin{itemize}
-\item ostatnie $ N $ bajtów musi mieć wartość $ N $
-\item jeżeli dopełnienie jest nieprawidłowe, cały rekord jest ignorowany
+    \item ostatnie $ N $ bajtów musi mieć wartość $ N $,
+    \item jeżeli dopełnienie jest nieprawidłowe, cały rekord jest ignorowany.
 \end{itemize}
-\item usunięcie ostatnich $ N $ bajtów
+\item Usunięcie ostatnich $ N $ bajtów.
 \end{enumerate}
 
 Kod implementujący odszyfrowanie wiadomości przedstawiono w listingu~\ref{lst:decrypt} w dodatku~\ref{app:codesamples}.
 
-Implementacja algorytmu AES pochodzi z biblioteki \emph{AVR-Crypto-Lib}. Jest to najlepiej udokumentowana, darmowa biblioteka implementująca algorytm AES. Implementacja trybu \gls{cbc} oraz algorytmu dopełniania została zrealizowana w ramach pracy.
+Implementacja algorytmu AES pochodzi z biblioteki \emph{AVR-Crypto-Lib}. Jest to najlepiej udokumentowana, darmowa biblioteka implementująca algorytm AES. Implementacja trybu \gls{cbc} oraz algorytmu dopełniania zostały zrealizowane w ramach pracy.
 
 \section{Uwierzytelnienie wiadomości}
 \label{sec:auth}
 
-Szyfrowanie wiadomości odbywa się za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{ecbcmac}. Wektor inicjalizacyjny wypełniony jest zerami i nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z wektorem inicjalizacyjnym użytym do szyfrowania, a nie tekst jawny. Długość szyfrogramu wraz z wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a więc nie jest stosowane dopełnianie.
+Uwierzytelnienie wiadomości odbywa się poprzez dodanie do wiadomości \gls{mac}. \gls{mac} dla danej wiadomości tworzony jest za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{ecbcmac}. Wektor inicjalizacyjny wypełniony jest zerami i nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z wektorem inicjalizacyjnym użytym do szyfrowania, a nie tekst jawny. Długość szyfrogramu wraz z wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a więc nie jest stosowane dopełnianie.
 
-Tryb \gls{ecbcmac} to tryb \gls{cbcmac}, którego wynik jest dodatkowo szyfrowany innym kluczem niż ten użyty do \gls{cbcmac}. W tej pracy do \gls{cbcmac} użyty jest klucz służący do uwierzytelniania, a wynik \gls{cbcmac} jest zaszyfrowany używając klucza służącego do szyfrowania.
+Tryb \gls{ecbcmac} to tryb \gls{cbcmac}, którego wynik jest dodatkowo szyfrowany innym kluczem niż ten użyty do \gls{cbcmac}. W tej pracy do \gls{cbcmac} użyty jest klucz służący do uwierzytelniania, a wynik \gls{cbcmac} jest szyfrowany używając klucza służącego do szyfrowania.
 
-Właściwe kroki potrzebne do obliczenia kodu uwierzytelniającego:
+Właściwe kroki potrzebne do obliczenia kodu uwierzytelniającego to:
 
 \begin{enumerate}
-\item obliczenie ostatniego bloku będącego wynikiem zaszyfrowania szyfrogramu w trybie \gls{cbc} z wektorem inicjalizacyjnym wypełnionym zerami przy użyciu klucza przeznaczonego do uwierzytelniania
-\item zaszyfrowanie bloku przy wykorzystaniu AES i klucza przeznaczonego do szyfrowania
+\item obliczenie ostatniego bloku będącego wynikiem zaszyfrowania szyfrogramu wraz z wektorem inicjalizacyjnym w trybie \gls{cbc} z wektorem inicjalizacyjnym wypełnionym zerami przy użyciu klucza przeznaczonego do uwierzytelniania,
+\item zaszyfrowanie bloku przy wykorzystaniu AES i klucza przeznaczonego do szyfrowania.
 \end{enumerate}
 
 Węzeł wysyłający dokleja kod uwierzytelniający przed szyfrogramem. Węzeł odbierający oddziela otrzymany kod od szyfrogramu, oblicza kod uwierzytelniający dla danego szyfrogramu i porównuje, czy zgadza się on z kodem otrzymanym. Jeżeli kod obliczony różni się od kodu otrzymanego, cały rekord jest ignorowany.
+
+Kod implementujący obliczanie \gls{mac} przedstawiono w listingu~\ref{lst:mac} w dodatku~\ref{app:codesamples}.
 
 Implementacja trybu \gls{ecbcmac} została zrealizowana w ramach pracy.
