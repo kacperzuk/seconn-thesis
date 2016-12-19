@@ -12,7 +12,7 @@ Zalecanym rozwiązaniem jest najpierw ustalenie wspólnego, tajnego klucza przy 
 \section{Kryptografia asymetryczna}
 \label{sec:kryptoAsym}
 
-Przy wyborze algorytmu dla potrzeb pracy istotne były:
+Przy wyborze algorytmu używanego do ustalania klucza dla potrzeb pracy istotne były:
 
 \begin{itemize}
 \item jakość implementacji dostępnych na mikroprocesory AVR,
@@ -31,7 +31,32 @@ W związku z przewagą krzywych eliptycznych przy zadanych założeniach do usta
 \section{Kryptografia symetryczna}
 \label{sec:kryptoSym}
 
-ECBC-MAC
-OMAC
-CCM
-HMAC
+Przy wyborze algorytmu dla potrzeb pracy istotne były:
+
+\begin{itemize}
+\item jakość implementacji dostępnych na mikroprocesory AVR,
+\item możliwość szyfrowania i uwierzytelniania danych.
+\end{itemize}
+
+Powszechnie dostępne są jedynie implementacje samych blokowych algorytmów szyfrowania takich jak AES oraz DES lub funkcji skrótu takich jak SHA-256. By uzyskać uwierzytelnianie wiadomości o zmiennej długości trzeba algorytmy blokowe zastosować w odpowiedni sposób. Przykładem jest tryb CBC-MAC {\itshape (ang. Cipher Block Chaining - Message Authentication Code)}. Pozwala on na wygenerowanie kodu uwierzytelniającego daną wiadomość, poprzez zaszyfrowanie jej w trybie CBC i użycie ostatniego szyfrogramu jako kodu.
+
+Tryb CBC-MAC -- przy nieprawidłowej implementacji -- może wprowadzić podatności:
+
+\begin{itemize}
+    \item użycie zmiennego wektora inicjalizacyjnego i przesyłanie go wraz z uwierzytelnianą wiadomością pozwala na dowolną modyfikację pierwszego bloku (16 bajtów) wiadomości bez zmiany kodu uwierzytelniającego,
+    \item użycie tego samego klucza do szyfrowania w trybie CBC oraz uwierzytelniania w trybie CBC-MAC pozwala na obliczenie użytego klucza bez jego wcześniejszej znajomości,
+    \item atakujący znający dwie wiadomości $ m $ oraz $ m' $ oraz ich kody uwierzytelniające może policzyć klucz uwierzytelniający wiadomości będącej specyficznym połączeniem wiadomości $ m $ oraz $ m' $
+\end{itemize}
+
+Wszystkim tym podatnościom da się zapobiec poprzez użycie niezmiennego wektora inicjalizacyjnego oraz zaszyfrowanie ostatniego bloku innym kluczem (tryb ECBC-MAC, {\itshape ang. Encrypt-last-block CBC-MAC}).
+
+Alternatywą jest także zastosowanie HMAC {\itshape (ang. keyed-hash message authentication code)}. Kodem uwierzytelniającym jest wtedy wynik funkcji skrótu policzony z połączenia współdzielonego klucza oraz uwierzytelnianej wiadomości.
+
+W pracy do uwierzytelniania wybrano AES w trybie ECBC-MAC. Zaletą tego rozwiązania jest możliwość użycia tej samej implementacji trybu CBC zarówno do szyfrowania jak i jako element trybu ECBC-MAC.
+
+W implementacji szyfrowania w trybie CBC należało rozwiązać problemy wymienione poniżej.
+
+\begin{itemize}
+    \item Użycie przewidywalnych wektorów inicjalizacyjnych pozwala atakującemu na zgadywanie treści wiadomości, a następnie -- poprzez odpowiednie spreparowanie nowej wiadomości -- weryfikację, czy wiadomość się zgadza. Wektory inicjalizacyjne muszą być nieprzewidywalne.
+    \item CBC operuje na blokach danych, a więc wiadomości o długości niebędącej wielokrotnością długości bloku trzeba dopełniać. Oznacza to że do szyfrowanej wiadomości trzeba dołączać jej długość lub użyć dopełnienia które jest jednoznaczne.
+\end{itemize}
