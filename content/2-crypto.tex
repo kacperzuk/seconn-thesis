@@ -50,7 +50,7 @@ Tryb CBC-MAC -- przy nieprawidłowej implementacji -- może wprowadzić podatno�
 
 Wszystkim tym podatnościom da się zapobiec poprzez użycie niezmiennego wektora inicjalizacyjnego oraz zaszyfrowanie ostatniego bloku innym kluczem (tryb ECBC-MAC, {\itshape ang. Encrypt-last-block CBC-MAC}).
 
-Alternatywą jest także zastosowanie HMAC {\itshape (ang. keyed-hash message authentication code)}. Kodem uwierzytelniającym jest wtedy wynik funkcji skrótu policzony z połączenia współdzielonego klucza oraz uwierzytelnianej wiadomości.
+Alternatywą jest także zastosowanie HMAC {\itshape (ang. keyed-hash message authentication code)}. Kodem uwierzytelniającym jest wtedy wynik funkcji skrótu policzony z połączenia współdzielonego klucza oraz uwierzytelnianej wiadomości \cite{krawczyk1997hmac}.
 
 W pracy do uwierzytelniania wybrano AES w trybie ECBC-MAC. Zaletą tego rozwiązania jest możliwość użycia tej samej implementacji trybu CBC zarówno do szyfrowania jak i jako element trybu ECBC-MAC.
 
