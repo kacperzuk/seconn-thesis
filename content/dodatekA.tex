@@ -1,8 +1,9 @@
 \chapter{Przykładowe rekordy protokołu komunikacji}
 \label{app:samplerecords}
 
-\begin{figure}[h]
+\begin{table}[h]
 \centering
+\caption{Budowa rekordu typu HelloRequest}
 \begin{BVerbatim}
 # Nagłówek:
 0x00 0x01 # wersja protokołu
@@ -22,12 +23,12 @@
 0x12 0x34 0x56 0x78 0x9A 0xBC 0xDE 0xF0
 0x12 0x34 0x56 0x78 0x9A 0xBC 0xDE 0xF0
 \end{BVerbatim}
-\caption{Budowa rekordu typu HelloRequest}
 \label{fig:hellorequestsample}
-\end{figure}
+\end{table}
 
-\begin{figure}
+\begin{table}
 \centering
+\caption{Budowa rekordu typu HelloResponse}
 \begin{BVerbatim}
 # Nagłówek:
 0x00 0x01 # wersja protokołu
@@ -52,12 +53,12 @@
 0x12 0x34 0x56 0x78 0x9A 0xBC 0xDE 0xF0
 0x12 0x34 0x56 0x78 0x9A 0xBC 0xDE 0xF0
 \end{BVerbatim}
-\caption{Budowa rekordu typu HelloResponse}
 \label{fig:helloresponsesample}
-\end{figure}
+\end{table}
 
-\begin{figure}
+\begin{table}
 \centering
+\caption{Budowa rekordu typu EncryptedData}
 \begin{BVerbatim}
 # Nagłówek:
 0x00 0x01 # wersja protokołu
@@ -75,6 +76,5 @@
 0x12 0x34 0x56 0x78 0x9A 0xBC 0xDE 0xF0
 0x12 0x34 0x56 0x78 0x9A 0xBC 0xDE 0xF0
 \end{BVerbatim}
-\caption{Budowa rekordu typu EncryptedData}
 \label{fig:encrypteddatasample}
-\end{figure}
+\end{table}

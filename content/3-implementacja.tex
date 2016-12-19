@@ -22,6 +22,7 @@ W protokole wymieniane są rekordy, których zawartość poprzedzona jest nagł
 
 \begin{table}[t]
 \centering
+\caption{Typy rekordów wraz z ich charakterystyką}
 \begin{tabular}{|l|p{1.4cm}|l|p{2.9cm}|p{3.1cm}|}
     \hline
     \textbf{Nazwa rekordu}  &
@@ -37,7 +38,6 @@ W protokole wymieniane są rekordy, których zawartość poprzedzona jest nagł
     EncryptedData & 0x02 & zmienna, minimum 32 bajty & tak & tak\\
     \hline
 \end{tabular}
-\caption{Typy rekordów wraz z ich charakterystyką}
 \label{tab:recordtypes}
 \end{table}
 
@@ -104,6 +104,8 @@ Implementacja algorytmu \gls{ecdh} z krzywą eliptyczną P-256 pochodzi z biblio
 
 Szyfrowanie wiadomości odbywa się za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{cbc}. Wektor inicjalizacyjny jest losowy i dołączany do zawartości przesyłanego rekordu przed szyfrogramem. Tekst jawny jest dopełniany do pełnego bloku według algorytmu zdefiniowanego w PKCS\#7~\cite{kaliski1998pkcs}.
 
+Zaimplementowana biblioteka nie posiada własnego źródła liczb losowych, musi zostać ono dostarczone w ramach integracji. Przykładowa metoda generowania liczb losowych na platformie Arduino została opisana w Dodatku \ref{app:randgen}.
+
 Właściwe kroki potrzebne do zaszyfrowania wiadomości wypisano poniżej.
 
 \begin{enumerate}
@@ -115,6 +117,35 @@ Właściwe kroki potrzebne do zaszyfrowania wiadomości wypisano poniżej.
 \item Zaszyfrowanie dopełnionego tekstu jawnego w trybie \gls{cbc} z losowym wektorem inicjalizacyjnym.
 \item Doklejenie wektora inicjalizacyjnego przed szyfrogramem.
 \end{enumerate}
+
+Przykłady dopełniania wiadomości o różnych długościach przedstawiono w tabeli~\ref{tab:padding}.
+
+\begin{table}[t]
+\centering
+\caption{Dopełnanie wiadomości do pełnego bloku. Dopełnienie zaznaczone zostało kolorem niebieskiem.}
+Wiadomość ,,Witaj swiecie'' (13 bajtów) zostaje dopełniona 3 bajtami o wartości 3 (0x03)
+
+\texttt{0x57 0x69 0x74 0x61\\
+0x6a 0x20 0x73 0x77\\
+0x69 0x65 0x63 0x69\\
+0x65 {\color[rgb]{0,0,1} 0x03 0x03 0x03}}
+
+Wiadomość ,,Witaj swiecie !!'' (16 bajtów) zostaje dopełniona 16 bajtami o wartości 16 (0x10).
+
+\texttt{0x57 0x69 0x74 0x61\\
+0x6a 0x20 0x73 0x77\\
+0x69 0x65 0x63 0x69\\
+0x65 0x20 0x21 0x21\\
+{\color[rgb]{0,0,1}
+0x10 0x10 0x10 0x10\\
+0x10 0x10 0x10 0x10\\
+0x10 0x10 0x10 0x10\\
+0x10 0x10 0x10 0x10\\
+}
+}
+
+\label{tab:padding}
+\end{table}
 
 Kod implementujący szyfrowanie wiadomości przedstawiono w listingu~\ref{lst:encrypt} w dodatku~\ref{app:codesamples}.
 
@@ -146,11 +177,11 @@ Uwierzytelnienie wiadomości odbywa się poprzez dołączenie do wiadomości \gl
 
 Tryb \gls{ecbcmac} to tryb \gls{cbcmac}, którego wynik jest dodatkowo szyfrowany innym kluczem niż ten użyty do \gls{cbcmac}. W tej pracy do \gls{cbcmac} użyty jest klucz służący do uwierzytelniania, a wynik \gls{cbcmac} jest szyfrowany używając klucza służącego do szyfrowania.
 
-Właściwe kroki potrzebne do obliczenia kodu uwierzytelniającego to:
+Właściwe kroki potrzebne do obliczenia kodu uwierzytelniającego opisano poniżej.
 
 \begin{enumerate}
-\item obliczenie ostatniego bloku będącego wynikiem zaszyfrowania szyfrogramu wraz z wektorem inicjalizacyjnym w trybie \gls{cbc} z wektorem inicjalizacyjnym wypełnionym zerami przy użyciu klucza przeznaczonego do uwierzytelniania,
-\item zaszyfrowanie bloku przy wykorzystaniu AES i klucza przeznaczonego do szyfrowania.
+\item Obliczenie ostatniego bloku będącego wynikiem zaszyfrowania szyfrogramu wraz z wektorem inicjalizacyjnym w trybie \gls{cbc} z wektorem inicjalizacyjnym wypełnionym zerami przy użyciu klucza przeznaczonego do uwierzytelniania.
+\item Zaszyfrowanie bloku przy wykorzystaniu AES i klucza przeznaczonego do szyfrowania.
 \end{enumerate}
 
 Węzeł wysyłający dokleja kod uwierzytelniający przed szyfrogramem. Węzeł odbierający oddziela otrzymany kod od szyfrogramu, oblicza kod uwierzytelniający dla danego szyfrogramu i porównuje, czy zgadza się on z kodem otrzymanym. Jeżeli kod obliczony różni się od kodu otrzymanego, cały rekord jest ignorowany.
