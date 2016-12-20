@@ -58,5 +58,7 @@ W implementacji szyfrowania w trybie CBC należało rozwiązać problemy wymieni
 
 \begin{itemize}
     \item Użycie przewidywalnych wektorów inicjalizacyjnych pozwala atakującemu na zgadywanie treści wiadomości, a następnie -- poprzez odpowiednie spreparowanie nowej wiadomości -- weryfikację, czy wiadomość się zgadza. Wektory inicjalizacyjne muszą być nieprzewidywalne.
-    \item CBC operuje na blokach danych, a więc wiadomości o długości niebędącej wielokrotnością długości bloku trzeba dopełniać. Oznacza to że do szyfrowanej wiadomości trzeba dołączać jej długość lub użyć dopełnienia które jest jednoznaczne.
+    \item CBC operuje na blokach danych, a więc wiadomości o długości niebędącej wielokrotnością długości bloku trzeba dopełniać. Oznacza to że do szyfrowanej wiadomości trzeba dołączać jej długość lub użyć dopełnienia, które jest jednoznaczne.
 \end{itemize}
+
+Szyfrowanie z uwierzytelnianiem jest połączone wedle zasady {\itshape Encrypt-then-MAC}. Oznacza to że wiadomość najpierw jest szyfrowana, a następnie uwierzytelniany jest jedynie jej szyfrogram. Jest to rozwiązanie zapewniające najwyższe bezpieczeństwo~\cite{black2011authenticated}.
