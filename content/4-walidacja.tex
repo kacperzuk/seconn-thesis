@@ -11,9 +11,20 @@ Walidacji poddane zostały trzy aspekty:
 
 \section{Poprawność interfejsu programistycznego}
 
-Poprawny interfejs programistyczny biblioteki musi umożliwiać stworzenie pełnego rozwiązania zapewniającego bezpieczną komunikację. Zostało to zweryfikowane poprzez stworzenie przykładowego oprogramowania wykorzystującego bibliotekę. Oprogramowanie to powstało na platformę Arduino oraz wykorzystuje moduł bluetooth XM-15B.
+Poprawny interfejs programistyczny biblioteki musi umożliwiać stworzenie pełnego rozwiązania zapewniającego bezpieczną komunikację. Zostało to zweryfikowane poprzez stworzenie przykładowego oprogramowania wykorzystującego bibliotekę. Oprogramowanie to powstało na platformę Arduino oraz wykorzystuje moduł Bluetooth XM-15B.
 
-Po uruchomieniu urządzenia moduł bluetooth zostanie skonfigurowany w trybie \emph{slave} i 
+Po uruchomieniu urządzenia biblioteka implementujące bezpieczną komunikację jest inicjalizowana, a moduł Bluetooth zostaje skonfigurowany w trybie \emph{slave} i oczekuje na połączenie. Przy inicjalizacji biblioteki przekazywane są następujące funkcje zaimplementowane w przykładowym oprogramowaniu:
+
+\begin{itemize}
+    \item funkcja obsługująca przekazywanie danych z biblioteki do modułu Bluetooth celem przesłania do drugiego węzła,
+    \item funkcja obsługująca i przekazująca połączeniem szeregowym dane przychodzące z biblioteki, które zostały przez bibliotekę poprawnie uwierzytelnione oraz zdeszyfrowane,
+    \item funkcja obsługująca powiadomienia o zmianie stanu połączenia przychodzące z biblioteki i przekazująca połączeniem szeregowym uwierzytelniony klucz publiczny drugiego węzła po nawiązaniu bezpiecznego połączenia,
+    \item funkcja generująca liczby losowe stworzona w oparciu o implementację zaproponowaną w bibliotece {\itshape micro-ecc} (Dodatek~\ref{app:randgen}).
+\end{itemize}
+
+Dodatkowo zaimplementowane zostało przekazywanie połączeniem szeregowym klucza publicznego urządzenia celem weryfikacji z drugim węzłem oraz przekazywanie danych przychodzących z modułu Bluetooth do biblioteki.
+
+// FIXME screenshot oraz schemat połączeń
 
 \section{Poprawność komunikacji}
 
