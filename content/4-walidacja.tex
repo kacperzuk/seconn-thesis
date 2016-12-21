@@ -22,11 +22,29 @@ Po uruchomieniu urządzenia biblioteka implementujące bezpieczną komunikację 
     \item funkcja generująca liczby losowe stworzona w oparciu o implementację zaproponowaną w bibliotece {\itshape micro-ecc} (Dodatek~\ref{app:randgen}).
 \end{itemize}
 
-Dodatkowo zaimplementowane zostało przekazywanie połączeniem szeregowym klucza publicznego urządzenia celem weryfikacji z drugim węzłem oraz przekazywanie danych przychodzących z modułu Bluetooth do biblioteki.
+Dodatkowo zaimplementowane zostało przekazywanie połączeniem szeregowym klucza publicznego urządzenia celem weryfikacji z drugim węzłem oraz przekazywanie danych przychodzących z modułu Bluetooth do biblioteki. Przepływ danych między przykładowym oprogramowaniem, biblioteką, drugim węzłęm oraz połączeniem szeregowym przedstawiono w Dodatku~\ref{app:samplediagram}.
 
-// FIXME screenshot oraz schemat połączeń
+Należy zwrócić uwagę, że oprogramowanie korzystające z biblioteki nie implementuje żadnej logiki związanej z protokołem komunikacji. Jest ona w całości zaimplementowana w bibliotece, a oprogramowanie jedynie zajmuje się przekazywaniem danych między fizycznym połączeniem a biblioteką.
 
-\section{Poprawność komunikacji}
+W tabeli \ref{tab:sample-comm} przedstawiono przykładowe dane, jakie zostają przesłane przez połączenie szeregowe. W tym przypadku drugi węzeł był odpowiedzialny za rozpoczęcie połączenia (przesłanie pierwszego HelloRequest), a po poprawnym uwierzytelnieniu przesłał uwierzytelnioną i zaszyfrowaną wiadomość o treści ,,Some message...''.
+
+\begin{table}
+\centering
+\caption{Przykładowe dane przesłane przez połączenie szeregowe. Stan nr 4 oznacza, że odebrany został prawidłowo uwierzytelniony pakiet HelloResponse zawierający klucz publiczny drugiego węzła.}
+\begin{BVerbatim}
+S!
+Our pubkey is: 0x6D35D8BE2F0C67210C143E649F250FC4E
+B014F25C305AC7C2FA6B02F0B4A4E63EA0BB52367AAF96E63B
+BD968C186830ADE2B2A24769CB32E1E1A690F51079C7E
+State:4
+Pubkey of other side is: 0x22743237010F6830994886B
+BFB781184C10D25E1D6819D075F40CF0724FEC049FF4804F82
+58C14049E373595BC0987061B93493E16C8C59E8C7C2A64FF5
+247B0
+D:>Some message...<
+\end{BVerbatim}
+\label{tab:sample-comm}
+\end{table}
 
 \section{Poprawność implementacji algorytmów kryptograficznych}
 
