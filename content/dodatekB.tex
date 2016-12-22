@@ -27,7 +27,7 @@ size_t _seconn_crypto_encrypt(void *destination, void *source, size_t length, ae
     uint8_t *dest = (uint8_t*)destination;
     uint8_t *src = (uint8_t*)source;
 
-    rng(dest, 16); // losowy wektor inicjalizacyjny
+    rng(dest, 16); // random initialization vector
     memset(&ctx, 0, sizeof(aes128_ctx_t));
 
     aes128_init(enc_key, &ctx);
@@ -89,16 +89,16 @@ size_t length, aes128_key_t mac_key, aes128_key_t enc_key) {
 
     uint8_t *block = mac;
 
-    memset(block, 0, 16); // wektor inicjalizacyjny wypełniony zerami
+    memset(block, 0, 16); // initialization vector filled with zeros
 
-    // obliczenie ostatniego bloku szyfrowania w trybie CBC
+    // calculating last block of CBC encryption
     size_t i = 0;
     for(; i+16 <= length; i += 16) {
         _seconn_crypto_xor_block(block, ((uint8_t*)message)+i);
         aes128_enc(block, &ctx);
     }
 
-    // szyfrowanie ostatniego bloku osobnym kluczem
+    // encrypting last block with separate key
     memset(&ctx, 0, sizeof(aes128_ctx_t));
     aes128_init(enc_key, &ctx);
     aes128_enc(block, &ctx);
