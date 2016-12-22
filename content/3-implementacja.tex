@@ -12,20 +12,21 @@ Protokół komunikacji między dwoma węzłami zaprojektowano i zaimplementowano
 \section{Podstawowe struktury protokołu}
 \label{sec:proto}
 
-W protokole wymieniane są rekordy, których zawartość poprzedzona jest nagłówkiem o następującej budowie:
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{images/wiadomosc.png}
+\caption{Budowa wiadomości w protokole komunikacji.}
+\label{fig:message-def}
+\end{figure}
 
-\begin{itemize}
-\item piersze dwa bajty definiują wersję protokołu i mają wartość 0x00 oraz 0x01,
-\item trzeci bajt definiuje typ rekordu,
-\item następne dwa bajty definiują długość zawartości rekordu (najbardziej znaczący bajt jako pierwszy).
-\end{itemize}
+Podstawową jednostką protokołu są wiadomości zbudowane według schematu zaprezentowanego na Rys. \ref{fig:message-def}.
 
 \begin{table}[t]
 \centering
-\caption{Typy rekordów wraz z ich charakterystyką}
-\begin{tabular}{|l|p{1.4cm}|l|p{2.9cm}|p{3.1cm}|}
+\caption{Typy wiadomości wraz z ich charakterystyką}
+\begin{tabular}{|p{2.3cm}|p{1.4cm}|l|p{2.9cm}|p{3.1cm}|}
     \hline
-    \textbf{Nazwa rekordu}  &
+    \textbf{Nazwa typu wiadomości}  &
     \textbf{Wartość pola typ}  &
     \textbf{Długość zawartości}  &
     \textbf{Czy zawartość jest zaszyfrowana}  &
@@ -42,71 +43,74 @@ W protokole wymieniane są rekordy, których zawartość poprzedzona jest nagł
 \end{table}
 
 
-Zdefiniowane typy rekordów są przedstawione w tabeli \ref{tab:recordtypes}.
+Zdefiniowane typy wiadomości są przedstawione w tabeli \ref{tab:recordtypes}.
 
-Budowę przykładowych rekordów przedstawiono na rysunkach \ref{fig:hellorequestsample}, \ref{fig:helloresponsesample} oraz \ref{fig:encrypteddatasample} w dodatku \ref{app:samplerecords}.
+Budowę przykładowych wiadomości przedstawiono na rysunkach \ref{fig:hellorequestsample}, \ref{fig:helloresponsesample} oraz \ref{fig:encrypteddatasample} w dodatku \ref{app:samplerecords}.
 
-Odbiorca rekordu powinien zweryfikować:
+Odbiorca powinien zweryfikować:
 
 \begin{itemize}
 \item zgodność wersji protokołu -- wymagane bajty 0x00 oraz 0x01,
-\item prawidłowość bajtu określającego typ rekordu -- wymagana wartość 0x00, 0x01 lub 0x02,
-\item zgodność zadeklarowanej długości zawartości rekordu z typem rekordu,
+\item prawidłowość bajtu określającego typ -- wymagana wartość 0x00, 0x01 lub 0x02,
+\item zgodność zadeklarowanej długości zawartości z typem,
 \item w przypadku typów HelloResponse oraz EncryptedData -- prawidłowość kodu uwierzytelniającego.
 \end{itemize}
 
-W przypadku niezgodności któregokolwiek elementu rekord powinien zostać zignorowany.
+W przypadku niezgodności któregokolwiek elementu wiadomość powinna zostać zignorowana.
 
 \section{Nawiązywanie połączenia}
 
-\begin{figure}
+\begin{figure}[h]
 \centering
 \begin{BVerbatim}
 Nawiązujący połączenie              Odbierający połączenie
-        +                                       +
-        |   HelloRequest                        |
-   1.   | +-----------------------------------> |
+        |             HelloRequest              |
+        |        zawiera klucz publiczny        |
+        |     nawiązującego połączenie (KPN)    |
+   1.   | +---------------------------------->> |
         |                                       |
+        |             HelloRequest              |
+        |        zawiera klucz publiczny        |
+        |     odbierającego połączenie (KPO)    |
+   2.   | <<----------------------------------+ |
         |                                       |
-        |                        HelloRequest   |
-   2.   | <-----------------------------------+ |
+        |             HelloResponse             |
+        |      zawiera uwierzytelniony KPN      |
+   3.   | +---------------------------------->> |
         |                                       |
-        |                                       |
-        |   HelloResponse                       |
-   3.   | +-----------------------------------> |
-        |                                       |
-        |                                       |
-        |                       HelloResponse   |
-   4.   | <-----------------------------------+ |
-        +                                       +
+        |             HelloResponse             |
+        |      zawiera uwierzytelniony KPO      |
+   4.   | <<----------------------------------+ |
 \end{BVerbatim}
-\caption{Kolejność wymiany rekordów w procesie nawiązywania połączenia}
+\caption{Kolejność wymiany wiadomości w procesie nawiązywania połączenia}
 \label{fig:handshake}
 \end{figure}
 
-Kolejność przesyłania rekordów w celu nawiązania połączenia przedstawiona jest na rysunku~\ref{fig:handshake}. Rekordy typu HelloRequest zawierają klucz publiczny węzła, który je wysyła. Węzeł, który odbiera HelloRequest, używa swojego klucza publicznego oraz klucza publicznego z odebranego rekordu do ustalenia sekretnego klucza.
+Kolejność przesyłania wiadomości w celu nawiązania połączenia przedstawiona jest na rysunku~\ref{fig:handshake}. HelloRequest zawiera klucz publiczny węzła, który go wysyła. Węzeł, który odbiera HelloRequest, używa swojego klucza publicznego oraz klucza publicznego z odebranej wiadomości do ustalenia sekretnego klucza. Nawiązującym połączenie może być dowolny węzeł.
 
-Po ustaleniu wspólnego klucza węzły mogą wysłać rekord HelloResponse, który zawiera zaszyfrowany i uwierzytelniony klucz publiczny węzła wysyłającego rekord. Jeżeli węzeł odbierający rekord skutecznie potwierdzi, że rekord jest prawidłowo uwierzytelniony, a zdeszyfrowany klucz publiczny pokrywa się z kluczem przesłanym wcześniej w rekordzie HelloRequest, połączenie uznawane jest za nawiązane. Po nawiązaniu połączenia wymieniane mogą być tylko rekordy typu EncryptedData.
+Po ustaleniu wspólnego klucza węzły mogą wysłać HelloResponse, który zawiera zaszyfrowany i uwierzytelniony klucz publiczny węzła go wysyłającego. Jeżeli węzeł odbierający wiadomość skutecznie potwierdzi, że jest ona prawidłowo uwierzytelniona, a zdeszyfrowany klucz publiczny pokrywa się z kluczem przesłanym wcześniej w HelloRequest, połączenie uznawane jest za nawiązane. Jeżeli przed odebraniem HelloResponse odebrany był więcej niż jeden HelloRequest, brana pod uwagę jest wiadomość odebrana jako ostatnia. Po nawiązaniu połączenia wymieniane mogą być tylko wiadomości typu EncryptedData.
 
 Istotne jest, że protokół nie zapewnia autentyczności danego klucza publicznego. Powinno to zostać zweryfikowane niezależnie, na przykład poprzez wyświetlenie skrótu klucza użytkownikowi i poproszenie go o potwierdzenie, że na obu urządzeniach uczestniczących w komunikacji jest wyświetlony taki sam klucz.
+
+Protokół zakłada też, że przesyłanie danych jest niezawodne, połączeniowe oraz zachowana jest ich kolejność. Nie są więc zaimplementowane retransmisje ani wykrywanie, czy drugi węzeł rzeczywiście nasłuchuje na przychodzące dane.
 
 \section{Generowanie współdzielonego klucza}
 \label{sec:sharedkey}
 
-Każdy z węzłów po odebraniu rekordu typu HelloRequest używa odebranego klucza publicznego oraz swojego klucza publicznego do ustalenia wspólnego sekretu przy użyciu algorytmu \gls{ecdh} oraz proponowanej przez \gls{nist} krzywej eliptycznej P-256~\cite{kerry2013digital} (w RFC 5480 nazwaną krzywą secp256r1~\cite{turner2009elliptic}).
+Każdy z węzłów po odebraniu HelloRequest używa odebranego klucza publicznego oraz swojego klucza publicznego do ustalenia wspólnego sekretu przy użyciu algorytmu \gls{ecdh} oraz proponowanej przez \gls{nist} krzywej eliptycznej P-256~\cite{kerry2013digital} (w RFC 5480 nazwaną krzywą secp256r1~\cite{turner2009elliptic}).
 
 Z sekretu będącego wynikiem algorytmu \gls{ecdh} liczony jest skrót przy użyciu algorytmu SHA-256. Następnie jest on dzielony na dwie części po 128-bitów. Pierwsza część staje się współdzielonym kluczem używanym do szyfrowania, druga część staje się współdzielonym kluczem używanym do uwierzytelniania.
 
 Implementacja algorytmu \gls{ecdh} z krzywą eliptyczną P-256 pochodzi z biblioteki \emph{micro-ecc}. Jest to jedyna darmowa biblioteka implementująca \gls{ecdh}.
 
-\section{Szyfrowanie i deszyfrowanie wiadomości}
+\section{Szyfrowanie i deszyfrowanie danych}
 \label{sec:encrypt}
 
-Szyfrowanie wiadomości odbywa się za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{cbc}. Wektor inicjalizacyjny jest losowy i dołączany do zawartości przesyłanego rekordu przed szyfrogramem. Tekst jawny jest dopełniany do pełnego bloku według algorytmu zdefiniowanego w PKCS\#7~\cite{kaliski1998pkcs}.
+Szyfrowanie zawartości wiadomości odbywa się za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{cbc}. Wektor inicjalizacyjny jest losowy i dołączany do zawartości przesyłanej wiadomości przed szyfrogramem. Tekst jawny jest dopełniany do pełnego bloku według algorytmu zdefiniowanego w PKCS\#7~\cite{kaliski1998pkcs}.
 
 Zaimplementowana biblioteka nie posiada własnego źródła liczb losowych, musi zostać ono dostarczone w ramach integracji. Przykładowa metoda generowania liczb losowych na platformie Arduino została opisana w Dodatku \ref{app:randgen}.
 
-Właściwe kroki potrzebne do zaszyfrowania wiadomości wypisano poniżej.
+Właściwe kroki potrzebne do zaszyfrowania zawartości wiadomości wypisano poniżej.
 
 \begin{enumerate}
 \item Dopełnienie tekstu jawnego do pełnego bloku:
@@ -118,19 +122,19 @@ Właściwe kroki potrzebne do zaszyfrowania wiadomości wypisano poniżej.
 \item Doklejenie wektora inicjalizacyjnego przed szyfrogramem.
 \end{enumerate}
 
-Przykłady dopełniania wiadomości o różnych długościach przedstawiono w tabeli~\ref{tab:padding}.
+Przykłady dopełniania danych o różnych długościach przedstawiono w tabeli~\ref{tab:padding}.
 
 \begin{table}[t]
 \centering
-\caption{Dopełnanie wiadomości do pełnego bloku. Dopełnienie zaznaczone zostało kolorem niebieskiem.}
-Wiadomość ,,Witaj swiecie'' (13 bajtów) zostaje dopełniona 3 bajtami o wartości 3 (0x03)
+\caption{Dopełnanie danych do pełnego bloku. Dopełnienie zaznaczone zostało kolorem niebieskiem.}
+Dane ,,Witaj swiecie'' (13 bajtów) zostają dopełnione 3 bajtami o wartości 3 (0x03)
 
 \texttt{0x57 0x69 0x74 0x61\\
 0x6a 0x20 0x73 0x77\\
 0x69 0x65 0x63 0x69\\
 0x65 {\color[rgb]{0,0,1} 0x03 0x03 0x03}}
 
-Wiadomość ,,Witaj swiecie !!'' (16 bajtów) zostaje dopełniona 16 bajtami o wartości 16 (0x10).
+Dane ,,Witaj swiecie !!'' (16 bajtów) zostają dopełnione 16 bajtami o wartości 16 (0x10).
 
 \texttt{0x57 0x69 0x74 0x61\\
 0x6a 0x20 0x73 0x77\\
@@ -147,9 +151,9 @@ Wiadomość ,,Witaj swiecie !!'' (16 bajtów) zostaje dopełniona 16 bajtami o w
 \label{tab:padding}
 \end{table}
 
-Kod implementujący szyfrowanie wiadomości przedstawiono w listingu~\ref{lst:encrypt} w dodatku~\ref{app:codesamples}.
+Kod implementujący szyfrowanie danych przedstawiono w listingu~\ref{lst:encrypt} w dodatku~\ref{app:codesamples}.
 
-Właściwe kroki potrzebne do odszyfrowania wiadomości wypisano poniżej.
+Właściwe kroki potrzebne do odszyfrowania zawartości wypisano poniżej.
 
 \begin{enumerate}
 \item Oddzielenie wektora inicjalizacyjnego od szyfrogramu.
@@ -161,19 +165,19 @@ Właściwe kroki potrzebne do odszyfrowania wiadomości wypisano poniżej.
 \item Zweryfikowanie poprawności dopełnienia:
 \begin{itemize}
     \item ostatnie $ N $ bajtów musi mieć wartość $ N $,
-    \item jeżeli dopełnienie jest nieprawidłowe, cały rekord jest ignorowany.
+    \item jeżeli dopełnienie jest nieprawidłowe, cała wiadomość jest ignorowana.
 \end{itemize}
 \item Usunięcie ostatnich $ N $ bajtów.
 \end{enumerate}
 
-Kod implementujący odszyfrowanie wiadomości przedstawiono w listingu~\ref{lst:decrypt} w dodatku~\ref{app:codesamples}.
+Kod implementujący odszyfrowanie danych przedstawiono w listingu~\ref{lst:decrypt} w dodatku~\ref{app:codesamples}.
 
 Implementacja algorytmu AES pochodzi z biblioteki \emph{AVR-Crypto-Lib}. Jest to najlepiej udokumentowana, darmowa biblioteka implementująca algorytm AES. Implementacja trybu \gls{cbc} oraz algorytmu dopełniania zostały zrealizowane w ramach pracy.
 
 \section{Uwierzytelnienie wiadomości}
 \label{sec:auth}
 
-Uwierzytelnienie wiadomości odbywa się poprzez dołączenie do wiadomości \gls{mac}. \gls{mac} dla danej wiadomości tworzony jest za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{ecbcmac}. Wektor inicjalizacyjny wypełniony jest zerami i nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z wektorem inicjalizacyjnym użytym do szyfrowania, a nie tekst jawny. Długość szyfrogramu wraz z wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a więc nie jest stosowane dopełnianie.
+Uwierzytelnienie wiadomości odbywa się poprzez dołączenie do zawartości \gls{mac}. \gls{mac} dla danej wiadomości tworzony jest za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{ecbcmac}. Wektor inicjalizacyjny wypełniony jest zerami i nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z wektorem inicjalizacyjnym użytym do szyfrowania, a nie tekst jawny. Długość szyfrogramu wraz z wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a więc nie jest stosowane dopełnianie.
 
 Tryb \gls{ecbcmac} to tryb \gls{cbcmac}, którego wynik jest dodatkowo szyfrowany innym kluczem niż ten użyty do \gls{cbcmac}. W tej pracy do \gls{cbcmac} użyty jest klucz służący do uwierzytelniania, a wynik \gls{cbcmac} jest szyfrowany używając klucza służącego do szyfrowania.
 
@@ -184,7 +188,7 @@ Właściwe kroki potrzebne do obliczenia kodu uwierzytelniającego opisano poni�
 \item Zaszyfrowanie bloku przy wykorzystaniu AES i klucza przeznaczonego do szyfrowania.
 \end{enumerate}
 
-Węzeł wysyłający dokleja kod uwierzytelniający przed szyfrogramem. Węzeł odbierający oddziela otrzymany kod od szyfrogramu, oblicza kod uwierzytelniający dla danego szyfrogramu i porównuje, czy zgadza się on z kodem otrzymanym. Jeżeli kod obliczony różni się od kodu otrzymanego, cały rekord jest ignorowany.
+Węzeł wysyłający dokleja kod uwierzytelniający przed szyfrogramem. Węzeł odbierający oddziela otrzymany kod od szyfrogramu, oblicza kod uwierzytelniający dla danego szyfrogramu i porównuje, czy zgadza się on z kodem otrzymanym. Jeżeli kod obliczony różni się od kodu otrzymanego, cała wiadomość jest ignorowana.
 
 Kod implementujący obliczanie \gls{mac} przedstawiono w listingu~\ref{lst:mac} w dodatku~\ref{app:codesamples}.
 

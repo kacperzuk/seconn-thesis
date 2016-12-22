@@ -1,13 +1,13 @@
-\chapter{Przykładowe rekordy protokołu komunikacji}
+\chapter{Przykładowe wiadomości protokołu komunikacji}
 \label{app:samplerecords}
 
 \begin{table}[h]
 \centering
-\caption{Budowa rekordu typu HelloRequest}
+\caption{Budowa wiadomości typu HelloRequest}
 \begin{BVerbatim}
 # Nagłówek:
 0x00 0x01 # wersja protokołu
-0x00      # typ rekordu: HelloRequest
+0x00      # typ wiadomości: HelloRequest
 0x00 0x40 # długość zawartości: 64 bajty
 
 # Zawartość:
@@ -28,11 +28,11 @@
 
 \begin{table}
 \centering
-\caption{Budowa rekordu typu HelloResponse}
+\caption{Budowa wiadomości typu HelloResponse}
 \begin{BVerbatim}
 # Nagłówek:
 0x00 0x01 # wersja protokołu
-0x01      # typ rekordu: HelloResponse
+0x01      # typ wiadomości: HelloResponse
 0x00 0x60 # długość zawartości: 96 bajtów
 
 # Zawartość:
@@ -58,11 +58,11 @@
 
 \begin{table}
 \centering
-\caption{Budowa rekordu typu EncryptedData}
+\caption{Budowa wiadomości typu EncryptedData}
 \begin{BVerbatim}
 # Nagłówek:
 0x00 0x01 # wersja protokołu
-0x02      # typ rekordu: EncryptedData
+0x02      # typ wiadomości: EncryptedData
 0x00 0x20 # długość zawartości: 32 bajty
 
 # Zawartość:
