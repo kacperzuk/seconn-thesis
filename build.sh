@@ -4,6 +4,6 @@ set -e
 
 pdflatex praca.tex
 bibtex praca
-makeglossaries praca
+#makeglossaries praca
 pdflatex praca.tex
 pdflatex praca.tex

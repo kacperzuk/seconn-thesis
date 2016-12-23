@@ -97,16 +97,16 @@ Protokół zakłada też, że przesyłanie danych jest niezawodne, połączeniow
 \section{Generowanie współdzielonego klucza}
 \label{sec:sharedkey}
 
-Każdy z węzłów po odebraniu HelloRequest używa odebranego klucza publicznego oraz swojego klucza publicznego do ustalenia wspólnego sekretu przy użyciu algorytmu \gls{ecdh} oraz proponowanej przez \gls{nist} krzywej eliptycznej P-256~\cite{kerry2013digital} (w RFC 5480 nazwaną krzywą secp256r1~\cite{turner2009elliptic}).
+Każdy z węzłów po odebraniu HelloRequest używa odebranego klucza publicznego oraz swojego klucza publicznego do ustalenia wspólnego sekretu przy użyciu algorytmu ECDH oraz proponowanej przez NIST krzywej eliptycznej P-256~\cite{kerry2013digital} (w RFC 5480 nazwaną krzywą secp256r1~\cite{turner2009elliptic}).
 
-Z sekretu będącego wynikiem algorytmu \gls{ecdh} liczony jest skrót przy użyciu algorytmu SHA-256. Następnie jest on dzielony na dwie części po 128-bitów. Pierwsza część staje się współdzielonym kluczem używanym do szyfrowania, druga część staje się współdzielonym kluczem używanym do uwierzytelniania.
+Z sekretu będącego wynikiem algorytmu ECDH liczony jest skrót przy użyciu algorytmu SHA-256. Następnie jest on dzielony na dwie części po 128-bitów. Pierwsza część staje się współdzielonym kluczem używanym do szyfrowania, druga część staje się współdzielonym kluczem używanym do uwierzytelniania.
 
-Implementacja algorytmu \gls{ecdh} z krzywą eliptyczną P-256 pochodzi z biblioteki \emph{micro-ecc}. Jest to jedyna darmowa biblioteka implementująca \gls{ecdh}.
+Implementacja algorytmu ECDH z krzywą eliptyczną P-256 pochodzi z biblioteki \emph{micro-ecc}. Jest to jedyna darmowa biblioteka implementująca ECDH.
 
 \section{Szyfrowanie i deszyfrowanie danych}
 \label{sec:encrypt}
 
-Szyfrowanie zawartości wiadomości odbywa się za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{cbc}. Wektor inicjalizacyjny jest losowy i dołączany do zawartości przesyłanej wiadomości przed szyfrogramem. Tekst jawny jest dopełniany do pełnego bloku według algorytmu zdefiniowanego w PKCS\#7~\cite{kaliski1998pkcs}.
+Szyfrowanie zawartości wiadomości odbywa się za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie CBC. Wektor inicjalizacyjny jest losowy i dołączany do zawartości przesyłanej wiadomości przed szyfrogramem. Tekst jawny jest dopełniany do pełnego bloku według algorytmu zdefiniowanego w PKCS\#7~\cite{kaliski1998pkcs}.
 
 Zaimplementowana biblioteka nie posiada własnego źródła liczb losowych, musi zostać ono dostarczone w ramach integracji. Przykładowa metoda generowania liczb losowych na platformie Arduino została opisana w Dodatku \ref{app:randgen}.
 
@@ -118,7 +118,7 @@ Właściwe kroki potrzebne do zaszyfrowania zawartości wiadomości wypisano pon
 \item jeżeli długość tekstu jawnego jest wielokrotnością długości bloku, do tekstu jawnego doklejone musi być 16 bajtów o wartości 16,
 \item w przeciwnym wypadku, gdy wymagane jest dopełnienie $ N $ bajtów, do tekstu jawnego doklejone musi być $ N $ bajtów o wartości $ N $.
 \end{itemize}
-\item Zaszyfrowanie dopełnionego tekstu jawnego w trybie \gls{cbc} z losowym wektorem inicjalizacyjnym.
+\item Zaszyfrowanie dopełnionego tekstu jawnego w trybie CBC z losowym wektorem inicjalizacyjnym.
 \item Doklejenie wektora inicjalizacyjnego przed szyfrogramem.
 \end{enumerate}
 
@@ -157,7 +157,7 @@ Właściwe kroki potrzebne do odszyfrowania zawartości wypisano poniżej.
 
 \begin{enumerate}
 \item Oddzielenie wektora inicjalizacyjnego od szyfrogramu.
-\item Zdeszyfrowanie szyfrogramu w trybu \gls{cbc} przy wykorzystaniu oddzielonego wektora inicjalizacyjnego.
+\item Zdeszyfrowanie szyfrogramu w trybu CBC przy wykorzystaniu oddzielonego wektora inicjalizacyjnego.
 \item Pobranie wartości ostatniego bajtu zdeszyfrowanego ciągu:
 \begin{itemize}
     \item wartość ta nazywana jest dalej $ N $.
@@ -172,24 +172,24 @@ Właściwe kroki potrzebne do odszyfrowania zawartości wypisano poniżej.
 
 Kod implementujący odszyfrowanie danych przedstawiono w listingu~\ref{lst:decrypt} w dodatku~\ref{app:codesamples}.
 
-Implementacja algorytmu AES pochodzi z biblioteki \emph{AVR-Crypto-Lib}. Jest to najlepiej udokumentowana, darmowa biblioteka implementująca algorytm AES. Implementacja trybu \gls{cbc} oraz algorytmu dopełniania zostały zrealizowane w ramach pracy.
+Implementacja algorytmu AES pochodzi z biblioteki \emph{AVR-Crypto-Lib}. Jest to najlepiej udokumentowana, darmowa biblioteka implementująca algorytm AES. Implementacja trybu CBC oraz algorytmu dopełniania zostały zrealizowane w ramach pracy.
 
 \section{Uwierzytelnienie wiadomości}
 \label{sec:auth}
 
-Uwierzytelnienie wiadomości odbywa się poprzez dołączenie do zawartości \gls{mac}. \gls{mac} dla danej wiadomości tworzony jest za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie \gls{ecbcmac}. Wektor inicjalizacyjny wypełniony jest zerami i nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z wektorem inicjalizacyjnym użytym do szyfrowania, a nie tekst jawny. Długość szyfrogramu wraz z wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a więc nie jest stosowane dopełnianie.
+Uwierzytelnienie wiadomości odbywa się poprzez dołączenie do zawartości MAC. MAC dla danej wiadomości tworzony jest za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie ECBC-MAC. Wektor inicjalizacyjny wypełniony jest zerami i nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z wektorem inicjalizacyjnym użytym do szyfrowania, a nie tekst jawny. Długość szyfrogramu wraz z wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a więc nie jest stosowane dopełnianie.
 
-Tryb \gls{ecbcmac} to tryb \gls{cbcmac}, którego wynik jest dodatkowo szyfrowany innym kluczem niż ten użyty do \gls{cbcmac}. W tej pracy do \gls{cbcmac} użyty jest klucz służący do uwierzytelniania, a wynik \gls{cbcmac} jest szyfrowany używając klucza służącego do szyfrowania.
+Tryb ECBC-MAC to tryb CBC-MAC, którego wynik jest dodatkowo szyfrowany innym kluczem niż ten użyty do CBC-MAC. W tej pracy do CBC-MAC użyty jest klucz służący do uwierzytelniania, a wynik CBC-MAC jest szyfrowany używając klucza służącego do szyfrowania.
 
 Właściwe kroki potrzebne do obliczenia kodu uwierzytelniającego opisano poniżej.
 
 \begin{enumerate}
-\item Obliczenie ostatniego bloku będącego wynikiem zaszyfrowania szyfrogramu wraz z wektorem inicjalizacyjnym w trybie \gls{cbc} z wektorem inicjalizacyjnym wypełnionym zerami przy użyciu klucza przeznaczonego do uwierzytelniania.
+\item Obliczenie ostatniego bloku będącego wynikiem zaszyfrowania szyfrogramu wraz z wektorem inicjalizacyjnym w trybie CBC z wektorem inicjalizacyjnym wypełnionym zerami przy użyciu klucza przeznaczonego do uwierzytelniania.
 \item Zaszyfrowanie bloku przy wykorzystaniu AES i klucza przeznaczonego do szyfrowania.
 \end{enumerate}
 
 Węzeł wysyłający dokleja kod uwierzytelniający przed szyfrogramem. Węzeł odbierający oddziela otrzymany kod od szyfrogramu, oblicza kod uwierzytelniający dla danego szyfrogramu i porównuje, czy zgadza się on z kodem otrzymanym. Jeżeli kod obliczony różni się od kodu otrzymanego, cała wiadomość jest ignorowana.
 
-Kod implementujący obliczanie \gls{mac} przedstawiono w listingu~\ref{lst:mac} w dodatku~\ref{app:codesamples}.
+Kod implementujący obliczanie MAC przedstawiono w listingu~\ref{lst:mac} w dodatku~\ref{app:codesamples}.
 
-Implementacja trybu \gls{ecbcmac} została zrealizowana w ramach pracy.
+Implementacja trybu ECBC-MAC została zrealizowana w ramach pracy.

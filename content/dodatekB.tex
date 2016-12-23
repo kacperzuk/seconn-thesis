@@ -81,7 +81,7 @@ size_t _seconn_crypto_decrypt(void *destination, void *source, size_t length, ae
 \end{figure}
 
 \begin{figure}
-\begin{lstlisting}[caption={Obliczanie \gls{mac} dla wiadomości},label={lst:mac}]
+\begin{lstlisting}[caption={Obliczanie MAC dla wiadomości},label={lst:mac}]
 void _seconn_crypto_calculate_mac(uint8_t *mac, void *message,
 size_t length, aes128_key_t mac_key, aes128_key_t enc_key) {
     memset(&ctx, 0, sizeof(aes128_ctx_t));
