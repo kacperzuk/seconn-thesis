@@ -12,5 +12,6 @@
 *.glo
 *.gls
 *.ist
+.*.swp
 todo
 *.lof
