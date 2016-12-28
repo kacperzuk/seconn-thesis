@@ -151,7 +151,7 @@ Dane ,,Witaj swiecie !!'' (16 bajtów) zostają dopełnione 16 bajtami o wartoś
 \label{tab:padding}
 \end{table}
 
-Kod implementujący szyfrowanie danych przedstawiono w listingu~\ref{lst:encrypt} w dodatku~\ref{app:codesamples}.
+Kod implementujący szyfrowanie danych przedstawiono w tabeli~\ref{lst:encrypt} w dodatku~\ref{app:codesamples}.
 
 Właściwe kroki potrzebne do odszyfrowania zawartości wypisano poniżej.
 
@@ -170,7 +170,7 @@ Właściwe kroki potrzebne do odszyfrowania zawartości wypisano poniżej.
 \item Usunięcie ostatnich $ N $ bajtów.
 \end{enumerate}
 
-Kod implementujący odszyfrowanie danych przedstawiono w listingu~\ref{lst:decrypt} w dodatku~\ref{app:codesamples}.
+Kod implementujący odszyfrowanie danych przedstawiono w tabeli~\ref{lst:decrypt} w dodatku~\ref{app:codesamples}.
 
 Implementacja algorytmu AES pochodzi z biblioteki \emph{AVR-Crypto-Lib}. Jest to najlepiej udokumentowana, darmowa biblioteka implementująca algorytm AES. Implementacja trybu CBC oraz algorytmu dopełniania zostały zrealizowane w ramach pracy.
 
@@ -190,6 +190,6 @@ Właściwe kroki potrzebne do obliczenia kodu uwierzytelniającego opisano poni�
 
 Węzeł wysyłający dokleja kod uwierzytelniający przed szyfrogramem. Węzeł odbierający oddziela otrzymany kod od szyfrogramu, oblicza kod uwierzytelniający dla danego szyfrogramu i porównuje, czy zgadza się on z kodem otrzymanym. Jeżeli kod obliczony różni się od kodu otrzymanego, cała wiadomość jest ignorowana.
 
-Kod implementujący obliczanie MAC przedstawiono w listingu~\ref{lst:mac} w dodatku~\ref{app:codesamples}.
+Kod implementujący obliczanie MAC przedstawiono w tabeli~\ref{lst:mac} w dodatku~\ref{app:codesamples}.
 
 Implementacja trybu ECBC-MAC została zrealizowana w ramach pracy.

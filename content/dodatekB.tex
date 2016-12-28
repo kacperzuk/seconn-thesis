@@ -21,8 +21,10 @@
 }
 
 
-\begin{figure}[h]
-\begin{lstlisting}[caption={Szyfrowanie CBC wraz z obsługą dopełnienia PKCS\#7},label={lst:encrypt}]
+\begin{table}[h]
+\caption{Szyfrowanie CBC wraz z obsługą dopełnienia PKCS\#7}
+\label{lst:encrypt}
+\begin{lstlisting}
 size_t _seconn_crypto_encrypt(void *destination, void *source, size_t length, aes128_key_t enc_key) {
     uint8_t *dest = (uint8_t*)destination;
     uint8_t *src = (uint8_t*)source;
@@ -50,10 +52,12 @@ size_t _seconn_crypto_encrypt(void *destination, void *source, size_t length, ae
     return i+32;
 }
 \end{lstlisting}
-\end{figure}
+\end{table}
 
-\begin{figure}
-\begin{lstlisting}[caption={Odszyfrowanie CBC wraz z obsługą dopełnienia PKCS\#7},label={lst:decrypt}]
+\begin{table}
+\caption{Odszyfrowanie CBC wraz z obsługą dopełnienia PKCS\#7}
+\label{lst:decrypt}
+\begin{lstlisting}
 size_t _seconn_crypto_decrypt(void *destination, void *source, size_t length, aes128_key_t enc_key) {
     uint8_t *src = ((uint8_t*)source);
     uint8_t *dest = (uint8_t*)destination;
@@ -78,10 +82,12 @@ size_t _seconn_crypto_decrypt(void *destination, void *source, size_t length, ae
     return i-pad_length;
 }
 \end{lstlisting}
-\end{figure}
+\end{table}
 
-\begin{figure}
-\begin{lstlisting}[caption={Obliczanie MAC dla wiadomości},label={lst:mac}]
+\begin{table}
+\caption{Obliczanie MAC dla wiadomości}
+\label{lst:mac}
+\begin{lstlisting}
 void _seconn_crypto_calculate_mac(uint8_t *mac, void *message,
 size_t length, aes128_key_t mac_key, aes128_key_t enc_key) {
     memset(&ctx, 0, sizeof(aes128_ctx_t));
@@ -104,4 +110,4 @@ size_t length, aes128_key_t mac_key, aes128_key_t enc_key) {
     aes128_enc(block, &ctx);
 }
 \end{lstlisting}
-\end{figure}
+\end{table}

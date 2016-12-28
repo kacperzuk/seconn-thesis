@@ -22,10 +22,12 @@
 
 Biblioteka zaimplementowana w ramach pracy nie posiada żadnego źródła liczb losowych, mimo że jest ono potrzebne do prawidłowego funkcjonowania. Użycie biblioteki wymaga więc dostarczenia źródła liczb losowych przez osobę używającą biblioteki.
 
-Najlepszą metodą jest użycie dedykowanego, zewnętrznego generatora liczb losowych. W bibliotece micro-ecc proponowana jest metoda wykorzystująca szum na niepodłączonym przetworniku analogowo cyfrowym. Jej implementacja zaprezentowana jest w listingu \ref{lst:rand}.
+Najlepszą metodą jest użycie dedykowanego, zewnętrznego generatora liczb losowych. W bibliotece micro-ecc proponowana jest metoda wykorzystująca szum na niepodłączonym przetworniku analogowo cyfrowym. Jej implementacja zaprezentowana jest w tabeli \ref{lst:rand}.
 
-\begin{figure}[!htb]
-\begin{lstlisting}[caption={Generowanie liczb losowych w oparciu o wbudowany przetwornik cyfrowo-analogowy. Źródło: biblioteka micro-ecc},label={lst:rand}]
+\begin{table}[!htb]
+\caption{Generowanie liczb losowych w oparciu o wbudowany przetwornik cyfrowo-analogowy. Źródło: biblioteka micro-ecc}
+\label{lst:rand}
+\begin{lstlisting}
 static int RNG(uint8_t *dest, unsigned size) {
   // Use the least-significant bits from the ADC for an unconnected pin (or connected to a source of 
   // random noise). This can take a long time to generate random data if the result of analogRead(0) 
@@ -52,4 +54,4 @@ static int RNG(uint8_t *dest, unsigned size) {
   return 1;
 }
 \end{lstlisting}
-\end{figure}
+\end{table}
