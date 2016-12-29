@@ -54,4 +54,11 @@ Implementacje algorytmów AES, CBC, dopełniania według PKCS\#7, SHA-256 oraz E
 
 W oparciu o tak stworzoną bibliotekę w języku Java napisano przykładową aplikację na platformę Android. Aplikacja po uruchomieniu stara się nawiązać połączenie Bluetooth z urządzeniem o nazwie ,,seconn''. Po nawiązaniu połączenia Bluetooth, wywoływana jest metoda biblioteki służąca nawiązaniu bezpiecznego połączenia. Wszystkie zmiany stanu połączenia są na bieżąco wyświetlane na ekranie, a po nawiązaniu bezpiecznego połączenia wyświetlane są klucze publiczne obu węzłów i możliwe jest przesyłanie uwierzytelnionych i zaszyfrowanych danych do drugiego węzła.
 
-Przykładowa aplikacja mobilna skutecznie połączyła się z urządzeniem AVR, a przesyłane dane były prawidłowo deszyfrowane, co potwierdza że implementacja algorytmów z zewnętrzych bibliotek AVR oraz implementacje wykonane w ramach pracy są zgodne z referencyjnymi implementacjami dostępnymi w języku Java.
+Przykładowa aplikacja mobilna skutecznie połączyła się z urządzeniem AVR, a przesyłane dane były prawidłowo deszyfrowane, co potwierdza że implementacja algorytmów z zewnętrzych bibliotek AVR oraz implementacje wykonane w ramach pracy są zgodne z referencyjnymi implementacjami dostępnymi w języku Java. Zrzut ekranu z aplikacji przedstawiono na rysunku \ref{fig:android}.
+
+\begin{figure}
+\centering
+\includegraphics[height=0.6\textheight]{images/android.png}
+\caption{Zrzut ekranu z przykładowej aplikacji na platformę Android}
+\label{fig:android}
+\end{figure}
