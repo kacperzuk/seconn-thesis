@@ -61,4 +61,11 @@ W implementacji szyfrowania w trybie CBC należało rozwiązać problemy wymieni
     \item CBC operuje na blokach danych, a więc wiadomości o długości niebędącej wielokrotnością długości bloku trzeba dopełniać. Oznacza to że do szyfrowanej wiadomości trzeba dołączać jej długość lub użyć dopełnienia, które jest jednoznaczne.
 \end{itemize}
 
-Szyfrowanie z uwierzytelnianiem jest połączone wedle zasady {\itshape Encrypt-then-MAC}. Oznacza to że wiadomość najpierw jest szyfrowana, a następnie uwierzytelniany jest jedynie jej szyfrogram. Jest to rozwiązanie zapewniające najwyższe bezpieczeństwo~\cite{black2011authenticated}.
+Szyfrowanie z uwierzytelnianiem jest połączone wedle zasady {\itshape Encrypt-then-MAC}. Oznacza to że wiadomość najpierw jest szyfrowana, a następnie uwierzytelniany jest jedynie jej szyfrogram. Jest to rozwiązanie zapewniające najwyższe bezpieczeństwo~\cite{black2011authenticated}. Całość procesu została przedstawiona na rysunku \ref{fig:etm}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{images/etm.png}
+\caption{Proces szyfrowania i uwierzytelniania danych}
+\label{fig:etm}
+\end{figure}
