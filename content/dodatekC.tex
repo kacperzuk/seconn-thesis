@@ -20,12 +20,12 @@
   rulecolor=\color{black}         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
 }
 
-Biblioteka zaimplementowana w ramach pracy nie posiada żadnego źródła liczb losowych, mimo że jest ono potrzebne do prawidłowego funkcjonowania. Użycie biblioteki wymaga więc dostarczenia źródła liczb losowych przez osobę używającą biblioteki.
+Biblioteka zaimplementowana w ramach pracy nie posiada żadnego źródła liczb losowych, mimo że jest ono potrzebne do jej prawidłowego funkcjonowania. Użycie biblioteki wymaga więc dostarczenia źródła liczb losowych przez osobę używającą biblioteki.
 
-Najlepszą metodą jest użycie dedykowanego, zewnętrznego generatora liczb losowych. W bibliotece micro-ecc proponowana jest metoda wykorzystująca szum na niepodłączonym przetworniku analogowo cyfrowym. Jej implementacja zaprezentowana jest w tabeli \ref{lst:rand}.
+Najbezpieczniejszą metodą jest użycie dedykowanego, zewnętrznego generatora liczb losowych, lecz możliwe jest też wykorzystanie modułów dostępnych standardowo w mikropocesorach AVR. W bibliotece micro-ecc proponowana jest metoda wykorzystująca szum na niepodłączonym przetworniku analogowo-cyfrowym. Jej implementacja zaprezentowana jest w tabeli \ref{lst:rand}.
 
 \begin{table}[!htb]
-\caption{Generowanie liczb losowych w oparciu o wbudowany przetwornik cyfrowo-analogowy. Źródło: biblioteka micro-ecc}
+\caption{Generowanie liczb losowych w oparciu o wbudowany przetwornik analogowo-cyfrowy. Źródło: biblioteka micro-ecc}
 \label{lst:rand}
 \begin{lstlisting}
 static int RNG(uint8_t *dest, unsigned size) {

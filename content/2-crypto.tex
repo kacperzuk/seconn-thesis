@@ -15,8 +15,8 @@ Zalecanym rozwiązaniem jest najpierw ustalenie wspólnego, tajnego klucza przy 
 Przy wyborze algorytmu używanego do ustalania klucza dla potrzeb pracy istotne były:
 
 \begin{itemize}
-\item jakość implementacji dostępnych na mikroprocesory AVR,
-\item złożoność obliczeniowa (niższa jest lepsza),
+\item jakość implementacji algorytmów dostępnych na mikroprocesory AVR,
+\item złożoność obliczeniowa,
 \item długość klucza wymagana do zapewnienia niezbędnego poziomu bezpieczeństwa.
 \end{itemize}
 
@@ -38,14 +38,14 @@ Przy wyborze algorytmu dla potrzeb pracy istotne były:
 \item możliwość szyfrowania i uwierzytelniania danych.
 \end{itemize}
 
-Powszechnie dostępne są jedynie implementacje samych blokowych algorytmów szyfrowania takich jak AES oraz DES lub funkcji skrótu takich jak SHA-256. By uzyskać uwierzytelnianie wiadomości o zmiennej długości trzeba algorytmy blokowe zastosować w odpowiedni sposób. Przykładem jest tryb CBC-MAC {\itshape (ang. Cipher Block Chaining - Message Authentication Code)}. Pozwala on na wygenerowanie kodu uwierzytelniającego daną wiadomość, poprzez zaszyfrowanie jej w trybie CBC i użycie ostatniego szyfrogramu jako kodu.
+Powszechnie dostępne są jedynie implementacje samych blokowych algorytmów szyfrowania takich jak AES oraz DES lub funkcji skrótu takich jak SHA-256. By uzyskać uwierzytelnianie wiadomości o zmiennej długości trzeba algorytmy blokowe zastosować w odpowiedni sposób. Przykładem jest tryb CBC-MAC {\itshape (ang. Cipher Block Chaining - Message Authentication Code)}. Pozwala on na wygenerowanie kodu uwierzytelniającego daną wiadomość, poprzez zaszyfrowanie jej w trybie CBC i użycie ostatniego bloku szyfrogramu jako kodu.
 
 Tryb CBC-MAC -- przy nieprawidłowej implementacji -- może wprowadzić podatności:
 
 \begin{itemize}
     \item użycie zmiennego wektora inicjalizacyjnego i przesyłanie go wraz z uwierzytelnianą wiadomością pozwala na dowolną modyfikację pierwszego bloku (16 bajtów) wiadomości bez zmiany kodu uwierzytelniającego,
     \item użycie tego samego klucza do szyfrowania w trybie CBC oraz uwierzytelniania w trybie CBC-MAC pozwala na obliczenie użytego klucza bez jego wcześniejszej znajomości,
-    \item atakujący znający dwie wiadomości $ m $ oraz $ m' $ oraz ich kody uwierzytelniające może policzyć klucz uwierzytelniający wiadomości będącej specyficznym połączeniem wiadomości $ m $ oraz $ m' $
+    \item atakujący znający dwie wiadomości $ m $ oraz $ m' $ oraz ich kody uwierzytelniające może policzyć klucz uwierzytelniający wiadomości będącej specyficznym połączeniem wiadomości $ m $ oraz $ m' $.
 \end{itemize}
 
 Wszystkim tym podatnościom da się zapobiec poprzez użycie niezmiennego wektora inicjalizacyjnego oraz zaszyfrowanie ostatniego bloku innym kluczem (tryb ECBC-MAC, {\itshape ang. Encrypt-last-block CBC-MAC}).
@@ -56,12 +56,12 @@ W pracy do uwierzytelniania wybrano AES w trybie ECBC-MAC. Zaletą tego rozwiąz
 
 W implementacji szyfrowania w trybie CBC należało rozwiązać problemy wymienione poniżej.
 
-\begin{itemize}
+\begin{enumerate}
     \item Użycie przewidywalnych wektorów inicjalizacyjnych pozwala atakującemu na zgadywanie treści wiadomości, a następnie -- poprzez odpowiednie spreparowanie nowej wiadomości -- weryfikację, czy wiadomość się zgadza. Wektory inicjalizacyjne muszą być nieprzewidywalne.
     \item CBC operuje na blokach danych, a więc wiadomości o długości niebędącej wielokrotnością długości bloku trzeba dopełniać. Oznacza to że do szyfrowanej wiadomości trzeba dołączać jej długość lub użyć dopełnienia, które jest jednoznaczne.
-\end{itemize}
+\end{enumerate}
 
-Szyfrowanie z uwierzytelnianiem jest połączone wedle zasady {\itshape Encrypt-then-MAC}. Oznacza to że wiadomość najpierw jest szyfrowana, a następnie uwierzytelniany jest jedynie jej szyfrogram. Jest to rozwiązanie zapewniające najwyższe bezpieczeństwo~\cite{black2011authenticated}. Całość procesu została przedstawiona na rysunku \ref{fig:etm}.
+Szyfrowanie z uwierzytelnianiem jest połączone wedle zasady {\itshape Encrypt-then-MAC}. Oznacza to że wiadomość najpierw jest szyfrowana, a następnie uwierzytelniany jest szyfrogram, a nie bezpośrednio wiadomość. Jest to rozwiązanie zapewniające najwyższe bezpieczeństwo, zapobiegające między innymi atakom typu \emph{padding oracle}~\cite{black2011authenticated}. Całość procesu została przedstawiona na rysunku \ref{fig:etm}.
 
 \begin{figure}[h]
 \centering

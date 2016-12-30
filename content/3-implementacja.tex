@@ -4,8 +4,8 @@
 Protokół komunikacji między dwoma węzłami zaprojektowano i zaimplementowano z następującymi założeniami:
 
 \begin{itemize}
-\item pełna funkcjonalność przy jak najmniejszych wymaganiach sprzętowych,
-\item niezależność od warstwy sieciowej,
+\item pełna funkcjonalność przy jak najmniejszych wymaganiach sprzętowych, w szczególności przy dostępnej małej ilości pamięci operacyjnej,
+\item częściowa niezależność od warstwy sieciowej,
 \item zapewnienie uwierzytelniania i szyfrowania wiadomości.
 \end{itemize}
 
@@ -108,7 +108,7 @@ Implementacja algorytmu ECDH z krzywą eliptyczną P-256 pochodzi z biblioteki \
 
 Szyfrowanie zawartości wiadomości odbywa się za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie CBC. Wektor inicjalizacyjny jest losowy i dołączany do zawartości przesyłanej wiadomości przed szyfrogramem. Tekst jawny jest dopełniany do pełnego bloku według algorytmu zdefiniowanego w PKCS\#7~\cite{kaliski1998pkcs}.
 
-Zaimplementowana biblioteka nie posiada własnego źródła liczb losowych, musi zostać ono dostarczone w ramach integracji. Przykładowa metoda generowania liczb losowych na platformie Arduino została opisana w Dodatku \ref{app:randgen}.
+Stworzona biblioteka nie posiada własnego źródła liczb losowych, musi zostać ono dostarczone w ramach integracji. Przykładowa metoda generowania liczb losowych na platformie Arduino została opisana w Dodatku \ref{app:randgen}.
 
 Właściwe kroki potrzebne do zaszyfrowania zawartości wiadomości wypisano poniżej.
 
@@ -124,17 +124,17 @@ Właściwe kroki potrzebne do zaszyfrowania zawartości wiadomości wypisano pon
 
 Przykłady dopełniania danych o różnych długościach przedstawiono w tabeli~\ref{tab:padding}.
 
-\begin{table}[t]
+\begin{table}[th]
 \centering
 \caption{Dopełnanie danych do pełnego bloku. Dopełnienie zaznaczone zostało kolorem niebieskiem.}
-Dane ,,Witaj swiecie'' (13 bajtów) zostają dopełnione 3 bajtami o wartości 3 (0x03)
+{\footnotesize Dane ,,Witaj swiecie'' (13 bajtów) zostają dopełnione 3 bajtami o wartości 3 (0x03):}
 
 \texttt{0x57 0x69 0x74 0x61\\
 0x6a 0x20 0x73 0x77\\
 0x69 0x65 0x63 0x69\\
 0x65 {\color[rgb]{0,0,1} 0x03 0x03 0x03}}
 
-Dane ,,Witaj swiecie !!'' (16 bajtów) zostają dopełnione 16 bajtami o wartości 16 (0x10).
+{\footnotesize Dane ,,Witaj swiecie !!'' (16 bajtów) zostają dopełnione 16 bajtami o wartości 16 (0x10):}
 
 \texttt{0x57 0x69 0x74 0x61\\
 0x6a 0x20 0x73 0x77\\
@@ -157,7 +157,7 @@ Właściwe kroki potrzebne do odszyfrowania zawartości wypisano poniżej.
 
 \begin{enumerate}
 \item Oddzielenie wektora inicjalizacyjnego od szyfrogramu.
-\item Zdeszyfrowanie szyfrogramu w trybu CBC przy wykorzystaniu oddzielonego wektora inicjalizacyjnego.
+\item Zdeszyfrowanie szyfrogramu w trybie CBC przy wykorzystaniu oddzielonego wektora inicjalizacyjnego.
 \item Pobranie wartości ostatniego bajtu zdeszyfrowanego ciągu:
 \begin{itemize}
     \item wartość ta nazywana jest dalej $ N $.
