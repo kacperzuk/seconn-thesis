@@ -1,7 +1,7 @@
 \chapter{Test opracowanej biblioteki}
 \label{cha:walidacja}
 
-Walidacji poddane zostały trzy aspekty:
+Zweryfikowane zostały trzy aspekty:
 
 \begin{itemize}
 \item poprawność zaprojektowania interfejsu programistycznego stworzonej biblioteki,
@@ -11,9 +11,9 @@ Walidacji poddane zostały trzy aspekty:
 
 \section{Poprawność interfejsu programistycznego}
 
-Poprawny interfejs programistyczny biblioteki musi umożliwiać stworzenie pełnego rozwiązania zapewniającego bezpieczną komunikację. Zostało to zweryfikowane poprzez stworzenie przykładowego oprogramowania wykorzystującego bibliotekę. Oprogramowanie to powstało na platformę Arduino oraz wykorzystuje moduł Bluetooth XM-15B do komunikacji.
+Poprawny interfejs programistyczny biblioteki musi umożliwiać implementację pełnego rozwiązania zapewniającego bezpieczną komunikację. Zostało to zweryfikowane poprzez stworzenie przykładowego oprogramowania wykorzystującego bibliotekę. Oprogramowanie to powstało na platformę Arduino oraz wykorzystuje moduł Bluetooth XM-15B do komunikacji.
 
-Po uruchomieniu urządzenia inicjalizowana jest stworzona biblioteka implementujące bezpieczną komunikację, a moduł Bluetooth zostaje skonfigurowany w trybie \emph{slave} z nazwą ,,seconn'' i oczekuje na połączenie. Przy inicjalizacji biblioteki przekazywane są następujące funkcje zaimplementowane w przykładowym oprogramowaniu:
+Po uruchomieniu urządzenia inicjalizowana jest stworzona biblioteka implementujące bezpieczną komunikację, a moduł Bluetooth zostaje skonfigurowany w trybie \emph{slave} z nazwą ,,seconn'' i oczekuje na połączenie. Argumentami funkcji inicjalizującej bibliotekę są wskaźniki na następujące funkcje zaimplementowane w przykładowym oprogramowaniu:
 
 \begin{itemize}
     \item funkcja obsługująca przekazywanie danych z biblioteki do modułu Bluetooth celem przesłania do drugiego węzła,
@@ -22,7 +22,7 @@ Po uruchomieniu urządzenia inicjalizowana jest stworzona biblioteka implementuj
     \item funkcja generująca liczby losowe stworzona w oparciu o implementację zaproponowaną w bibliotece {\itshape micro-ecc} (opis w dodateku~\ref{app:randgen}).
 \end{itemize}
 
-Dodatkowo zaimplementowane zostało przekazywanie połączeniem szeregowym klucza publicznego urządzenia celem weryfikacji z drugim węzłem oraz przekazywanie danych przychodzących z modułu Bluetooth do biblioteki. Przepływ danych między przykładowym oprogramowaniem, biblioteką, drugim węzłęm oraz połączeniem szeregowym przedstawiono w Dodatku~\ref{app:samplediagram}.
+Dodatkowo zaimplementowane zostało przekazywanie połączeniem szeregowym klucza publicznego urządzenia celem weryfikacji z drugim węzłem oraz przekazywanie danych przychodzących z modułu Bluetooth do biblioteki. Przepływ danych między przykładowym oprogramowaniem, biblioteką, drugim węzłem oraz połączeniem szeregowym przedstawiono w Dodatku~\ref{app:samplediagram}.
 
 Należy zwrócić uwagę, że oprogramowanie korzystające z biblioteki nie implementuje żadnej logiki związanej z protokołem komunikacji. Jest ona w całości zaimplementowana w bibliotece, a oprogramowanie jedynie zajmuje się przekazywaniem danych między fizycznym połączeniem a biblioteką.
 
@@ -48,7 +48,7 @@ D:>Some message...<
 
 \section{Poprawność implementacji algorytmów kryptograficznych}
 
-Poprawność implementacji algorytmów CBC i dopełniania według PKCS\#7 stworzonych w ramach pracy oraz algorytmów AES, SHA-256 oraz ECDH dostarczonych przez zewnętrzne biblioteki została zwalidowana poprzez stworzenie drugiej implementacji protokołu w języku Java.
+Poprawność implementacji algorytmów CBC i dopełniania według PKCS\#7 stworzonych w ramach pracy oraz algorytmów AES, SHA-256 oraz ECDH dostarczonych przez zewnętrzne biblioteki została zweryfikowana poprzez stworzenie drugiej implementacji protokołu w języku Java.
 
 Implementacje algorytmów AES, CBC, dopełniania według PKCS\#7, SHA-256 oraz ECDH pochodzą z pakietów java.security oraz javax.crypto biblioteki standardowej języka Java. Implementacja ECBC-MAC została wykonana w ramach pracy w oparciu o implementację CBC dostarczoną przez bibliotekę standardową. Użyte konfiguracje szyfrów to \emph{AES/CBC/NoPadding} i \emph{AES/ECB/NoPadding} do obliczania sygnatury oraz \emph{AES/CBC/PKCS7Padding} do szyfrowania i deszyfrowania.
 

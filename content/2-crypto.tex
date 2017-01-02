@@ -3,7 +3,7 @@
 
 W zależności od potrzeb i ograniczeń stosuje się różne metody uwierzytelniania podmiotów w komunikacji. Wyróżnić należy uwierzytelnianie przy pomocy kryptografii asymetrycznej, w której używana jest para matematycznie związanych ze sobą kluczy, oraz uwierzytelnianie przy pomocy kryptografii symetrycznej, w której używany jest jeden, współdzielony, tajny klucz.
 
-Klucze w przypadku kryptografii asymetrycznej muszą posiadać konkretne właściwości. W przypadku algorytmu RSA bezpieczeństwo polega na trudności w faktoryzowaniu dużych liczb, co wymaga stosowania kluczy co najmniej 2048 bitowych~\cite{Nist}. Klucze w przypadku kryptografii symetrycznej nie muszą mieć konkretnych właściwości poza ich nieprzewidywalnością.
+Klucze w przypadku kryptografii asymetrycznej muszą posiadać konkretne właściwości. W przypadku algorytmu RSA bezpieczeństwo polega na trudności w faktoryzowaniu dużych liczb, co wymaga stosowania kluczy co najmniej 2048 bitowych~\cite{Nist}. Klucze w przypadku kryptografii symetrycznej nie muszą mieć konkretnych właściwości poza ich nieprzewidywalnością i zapewniają porównywalne bezpieczeństwo przy krótszych kluczach. Kluczowi RSA o długości 2048 bitów odpowiada klucz 112 bitowy dla szyfrów symetrycznych.
 
 Ważną różnicą jest też wydajność. Kryptografia asymetryczna jest dużo bardziej złożona obliczeniowo od symetrycznej~\cite{al2008comparative}. Jest to szczególnie istotne na ograniczonych sprzętowo systemach wbudowanych. Przewagą kryptografii asymetrycznej jest jednak brak konieczności ustalenia wspólnego klucza przed rozpoczęciem komunikacji, jak ma to miejsce w przypadku kryptografii symetrycznej.
 
@@ -17,16 +17,16 @@ Przy wyborze algorytmu używanego do ustalania klucza dla potrzeb pracy istotne 
 \begin{itemize}
 \item jakość implementacji algorytmów dostępnych na mikroprocesory AVR,
 \item złożoność obliczeniowa,
-\item długość klucza wymagana do zapewnienia niezbędnego poziomu bezpieczeństwa.
+\item długość klucza wymagana do zapewnienia bezpieczeństwa na co najmniej 5 lat.
 \end{itemize}
 
 Biblioteka \emph{AVR-Crypto-Lib} dostarcza implementację algorytmów RSA oraz DSA\footnote{\url{https://trac.cryptolib.org/avr-crypto-lib/browser}}. Biblioteka \emph{Emsign} dostarcza implementację RSA, lecz tylko z 64 bitowym kluczem\footnote{\url{http://www.emsign.nl/}}, co nie jest wystarczające dla zapewnienia bezpieczeństwa. Komercyjna biblioteka \emph{LightCrypt-AVR8-ECC} oraz biblioteka \emph{micro-ecc} dostarczają implementację kryptografii opartej o krzywe eliptyczne\footnote{\url{http://industrial.crypto.cmmsigma.eu/lightcrypt_avr8/lc_avr8_ecc.pl.html}}. Brak jest na rynku implementacji innych algorytmów klucza publicznego. Dostępność implementacji ogranicza wybór algorytmu do RSA, DSA oraz krzywych eliptycznych.
 
 Następnym kryterium jest złożoność obliczeniowa. W analizie przeprowadzonej przez pracowników \emph{Sun Microsystems Laboratories} wykazano, że na mikroprocesorach AVR algorytmy oparte o krzywe eliptyczne są o rząd wielkości szybsze od algorytmu RSA~\cite{Gura2004}.
 
-Krzywe eliptyczne wymagają najkrótszych kluczy. Rekomendacje NIST~\cite{Nist} (National Institute of Standards and Technology) podają, że 256-bitowy klucz ECC \emph{(ang. Elliptic Curve Cryptography)} zapewnia bezpieczeństwo porównywalne do 3072-bitowego klucza RSA lub DSA.
+Krzywe eliptyczne wymagają najkrótszych kluczy. Rekomendacje NIST~\cite{Nist} (National Institute of Standards and Technology) podają, że 256-bitowy klucz ECC \emph{(ang. Elliptic Curve Cryptography)} zapewnia bezpieczeństwo porównywalne do 3072-bitowego klucza RSA lub DSA i że taki klucz wystarczy do 2030 roku.
 
-W związku z przewagą krzywych eliptycznych przy zadanych założeniach do ustalenia wspólnego klucza wybrano algorytm ECDH \emph{(ang. Elliptic Curve Diffie-Hellman)}. Wadą tego rozwiązania jest niezmienność klucza ustalanego tą metodą. Powoduje to brak utajnienia przekazywania \emph{(ang. forward secrecy)}.
+W związku z przewagą krzywych eliptycznych przy zadanych założeniach do ustalenia wspólnego klucza wybrano algorytm ECDH \emph{(ang. Elliptic Curve Diffie--Hellman)}. Wadą tego rozwiązania jest niezmienność klucza ustalanego tą metodą. Powoduje to brak utajnienia przekazywania \emph{(ang. forward secrecy)}.
 
 \section{Kryptografia symetryczna}
 \label{sec:kryptoSym}
@@ -38,7 +38,7 @@ Przy wyborze algorytmu dla potrzeb pracy istotne były:
 \item możliwość szyfrowania i uwierzytelniania danych.
 \end{itemize}
 
-Powszechnie dostępne są jedynie implementacje samych blokowych algorytmów szyfrowania takich jak AES oraz DES lub funkcji skrótu takich jak SHA-256. By uzyskać uwierzytelnianie wiadomości o zmiennej długości trzeba algorytmy blokowe zastosować w odpowiedni sposób. Przykładem jest tryb CBC-MAC {\itshape (ang. Cipher Block Chaining - Message Authentication Code)}. Pozwala on na wygenerowanie kodu uwierzytelniającego daną wiadomość, poprzez zaszyfrowanie jej w trybie CBC i użycie ostatniego bloku szyfrogramu jako kodu.
+Powszechnie dostępne są jedynie implementacje samych blokowych algorytmów szyfrowania takich jak AES oraz DES lub funkcji skrótu takich jak SHA-256. By uzyskać uwierzytelnianie wiadomości o zmiennej długości należy algorytmy blokowe zastosować w odpowiedni sposób. Przykładem jest tryb CBC-MAC {\itshape (ang. Cipher Block Chaining - Message Authentication Code)}. Pozwala on na wygenerowanie kodu uwierzytelniającego daną wiadomość, poprzez zaszyfrowanie jej w trybie CBC i użycie ostatniego bloku szyfrogramu jako kodu.
 
 Tryb CBC-MAC -- przy nieprawidłowej implementacji -- może wprowadzić podatności:
 
@@ -58,14 +58,14 @@ W implementacji szyfrowania w trybie CBC należało rozwiązać problemy wymieni
 
 \begin{enumerate}
     \item Użycie przewidywalnych wektorów inicjalizacyjnych pozwala atakującemu na zgadywanie treści wiadomości, a następnie -- poprzez odpowiednie spreparowanie nowej wiadomości -- weryfikację, czy wiadomość się zgadza. Wektory inicjalizacyjne muszą być nieprzewidywalne.
-    \item CBC operuje na blokach danych, a więc wiadomości o długości niebędącej wielokrotnością długości bloku trzeba dopełniać. Oznacza to że do szyfrowanej wiadomości trzeba dołączać jej długość lub użyć dopełnienia, które jest jednoznaczne.
+    \item CBC operuje na blokach danych, a więc dla wiadomości o długości niebędącej wielokrotnością długości bloku wymagane jest dopełnienie. Oznacza to że do szyfrowanej wiadomości należy dołączać jej długość lub użyć dopełnienia, które jest jednoznaczne.
 \end{enumerate}
 
 Szyfrowanie z uwierzytelnianiem jest połączone wedle zasady {\itshape Encrypt-then-MAC}. Oznacza to że wiadomość najpierw jest szyfrowana, a następnie uwierzytelniany jest szyfrogram, a nie bezpośrednio wiadomość. Jest to rozwiązanie zapewniające najwyższe bezpieczeństwo, zapobiegające między innymi atakom typu \emph{padding oracle}~\cite{black2011authenticated}. Całość procesu została przedstawiona na rysunku \ref{fig:etm}.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.7\textwidth]{images/etm.png}
+\includegraphics[width=0.6\textwidth]{images/etm.png}
 \caption{Proces szyfrowania i uwierzytelniania danych}
 \label{fig:etm}
 \end{figure}

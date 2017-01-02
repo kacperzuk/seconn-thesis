@@ -19,18 +19,16 @@ Protokół komunikacji między dwoma węzłami zaprojektowano i zaimplementowano
 \label{fig:message-def}
 \end{figure}
 
-Podstawową jednostką protokołu są wiadomości zbudowane według schematu zaprezentowanego na Rys. \ref{fig:message-def}.
-
 \begin{table}[t]
 \centering
 \caption{Typy wiadomości wraz z ich charakterystyką}
 \begin{tabular}{|p{2.3cm}|p{1.4cm}|l|p{2.9cm}|p{3.1cm}|}
     \hline
-    \textbf{Nazwa typu wiadomości}  &
+    \textbf{Typ \mbox{wiadomości}}  &
     \textbf{Wartość pola typ}  &
-    \textbf{Długość zawartości}  &
-    \textbf{Czy zawartość jest zaszyfrowana}  &
-    \textbf{Czy zawartość jest uwierzytelniona}\\
+    \textbf{Długość bloku danych}  &
+    \textbf{Blok danych jest zaszyfrowany}  &
+    \textbf{Blok danych jest uwierzytelniony}\\
     \hline
     HelloRequest & 0x00 & 64 bajty & nie & nie\\
     \hline
@@ -42,17 +40,14 @@ Podstawową jednostką protokołu są wiadomości zbudowane według schematu zap
 \label{tab:recordtypes}
 \end{table}
 
-
-Zdefiniowane typy wiadomości są przedstawione w tabeli \ref{tab:recordtypes}.
-
-Budowę przykładowych wiadomości przedstawiono na rysunkach \ref{fig:hellorequestsample}, \ref{fig:helloresponsesample} oraz \ref{fig:encrypteddatasample} w dodatku \ref{app:samplerecords}.
+Podstawową jednostką protokołu są wiadomości zbudowane według schematu zaprezentowanego na Rys. \ref{fig:message-def}. Zdefiniowane typy wiadomości są przedstawione w tabeli \ref{tab:recordtypes}. Budowę przykładowych wiadomości przedstawiono na rysunkach \ref{fig:hellorequestsample}, \ref{fig:helloresponsesample} oraz \ref{fig:encrypteddatasample} w dodatku \ref{app:samplerecords}.
 
 Odbiorca powinien zweryfikować:
 
 \begin{itemize}
 \item zgodność wersji protokołu -- wymagane bajty 0x00 oraz 0x01,
 \item prawidłowość bajtu określającego typ -- wymagana wartość 0x00, 0x01 lub 0x02,
-\item zgodność zadeklarowanej długości zawartości z typem,
+\item zgodność zadeklarowanej długości bloku danych z typem,
 \item w przypadku typów HelloResponse oraz EncryptedData -- prawidłowość kodu uwierzytelniającego.
 \end{itemize}
 
@@ -65,13 +60,13 @@ W przypadku niezgodności któregokolwiek elementu wiadomość powinna zostać z
 \begin{BVerbatim}
 Nawiązujący połączenie              Odbierający połączenie
         |             HelloRequest              |
-        |        zawiera klucz publiczny        |
-        |     nawiązującego połączenie (KPN)    |
+        |      zawiera KPN (klucz publiczny     |
+        |       nawiązującego połączenie)       |
    1.   | +---------------------------------->> |
         |                                       |
         |             HelloRequest              |
-        |        zawiera klucz publiczny        |
-        |     odbierającego połączenie (KPO)    |
+        |      zawiera KPO (klucz publiczny     |
+        |       odbierającego połączenie)       |
    2.   | <<----------------------------------+ |
         |                                       |
         |             HelloResponse             |
@@ -86,9 +81,9 @@ Nawiązujący połączenie              Odbierający połączenie
 \label{fig:handshake}
 \end{figure}
 
-Kolejność przesyłania wiadomości w celu nawiązania połączenia przedstawiona jest na rysunku~\ref{fig:handshake}. HelloRequest zawiera klucz publiczny węzła, który go wysyła. Węzeł, który odbiera HelloRequest, używa swojego klucza publicznego oraz klucza publicznego z odebranej wiadomości do ustalenia sekretnego klucza. Nawiązującym połączenie może być dowolny węzeł.
+Kolejność przesyłania wiadomości w celu nawiązania połączenia przedstawiona została na rysunku~\ref{fig:handshake}. HelloRequest zawiera klucz publiczny węzła, który go wysyła. Węzeł, który odbiera HelloRequest, używa swojego klucza publicznego oraz klucza publicznego z odebranej wiadomości do ustalenia sekretnego klucza. Nawiązującym połączenie może być dowolny węzeł.
 
-Po ustaleniu wspólnego klucza węzły mogą wysłać HelloResponse, który zawiera zaszyfrowany i uwierzytelniony klucz publiczny węzła go wysyłającego. Jeżeli węzeł odbierający wiadomość skutecznie potwierdzi, że jest ona prawidłowo uwierzytelniona, a zdeszyfrowany klucz publiczny pokrywa się z kluczem przesłanym wcześniej w HelloRequest, połączenie uznawane jest za nawiązane. Jeżeli przed odebraniem HelloResponse odebrany był więcej niż jeden HelloRequest, brana pod uwagę jest wiadomość odebrana jako ostatnia. Po nawiązaniu połączenia wymieniane mogą być tylko wiadomości typu EncryptedData.
+Po ustaleniu wspólnego klucza węzły mogą wysłać HelloResponse, który zawiera zaszyfrowany i uwierzytelniony klucz publiczny pochodzący z wysyłającego węzła. Jeżeli węzeł odbierający wiadomość skutecznie potwierdzi, że jest ona prawidłowo uwierzytelniona, a zdeszyfrowany klucz publiczny pokrywa się z kluczem przesłanym wcześniej w HelloRequest, połączenie uznawane jest za nawiązane. Jeżeli przed odebraniem HelloResponse odebrany był więcej niż jeden HelloRequest, brana pod uwagę jest wiadomość odebrana jako ostatnia. Po nawiązaniu połączenia wymieniane mogą być tylko wiadomości typu EncryptedData.
 
 Istotne jest, że protokół nie zapewnia autentyczności danego klucza publicznego. Powinno to zostać zweryfikowane niezależnie, na przykład poprzez wyświetlenie skrótu klucza użytkownikowi i poproszenie go o potwierdzenie, że na obu urządzeniach uczestniczących w komunikacji jest wyświetlony taki sam klucz.
 
@@ -97,7 +92,7 @@ Protokół zakłada też, że przesyłanie danych jest niezawodne, połączeniow
 \section{Generowanie współdzielonego klucza}
 \label{sec:sharedkey}
 
-Każdy z węzłów po odebraniu HelloRequest używa odebranego klucza publicznego oraz swojego klucza publicznego do ustalenia wspólnego sekretu przy użyciu algorytmu ECDH oraz proponowanej przez NIST krzywej eliptycznej P-256~\cite{kerry2013digital} (w RFC 5480 nazwaną krzywą secp256r1~\cite{turner2009elliptic}).
+Każdy z węzłów po odebraniu HelloRequest używa odebranego klucza publicznego oraz swojego klucza publicznego do ustalenia wspólnego sekretu przy użyciu algorytmu ECDH \emph{(ang. Elliptic curve Diffie--Hellman)} oraz proponowanej przez NIST krzywej eliptycznej P-256~\cite{kerry2013digital} (w RFC 5480 nazwaną krzywą secp256r1~\cite{turner2009elliptic}).
 
 Z sekretu będącego wynikiem algorytmu ECDH liczony jest skrót przy użyciu algorytmu SHA-256. Następnie jest on dzielony na dwie części po 128-bitów. Pierwsza część staje się współdzielonym kluczem używanym do szyfrowania, druga część staje się współdzielonym kluczem używanym do uwierzytelniania.
 
@@ -106,11 +101,11 @@ Implementacja algorytmu ECDH z krzywą eliptyczną P-256 pochodzi z biblioteki \
 \section{Szyfrowanie i deszyfrowanie danych}
 \label{sec:encrypt}
 
-Szyfrowanie zawartości wiadomości odbywa się za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie CBC. Wektor inicjalizacyjny jest losowy i dołączany do zawartości przesyłanej wiadomości przed szyfrogramem. Tekst jawny jest dopełniany do pełnego bloku według algorytmu zdefiniowanego w PKCS\#7~\cite{kaliski1998pkcs}.
+Szyfrowanie bloku danych w wiadomości odbywa się za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie CBC. Wektor inicjalizacyjny jest losowy i dołączany do danych przesyłanej wiadomości przed szyfrogramem. Tekst jawny jest dopełniany do pełnego bloku według algorytmu zdefiniowanego w PKCS\#7~\cite{kaliski1998pkcs}.
 
 Stworzona biblioteka nie posiada własnego źródła liczb losowych, musi zostać ono dostarczone w ramach integracji. Przykładowa metoda generowania liczb losowych na platformie Arduino została opisana w Dodatku \ref{app:randgen}.
 
-Właściwe kroki potrzebne do zaszyfrowania zawartości wiadomości wypisano poniżej.
+Właściwe kroki potrzebne do zaszyfrowania danych wypisano poniżej.
 
 \begin{enumerate}
 \item Dopełnienie tekstu jawnego do pełnego bloku:
@@ -126,13 +121,13 @@ Przykłady dopełniania danych o różnych długościach przedstawiono w tabeli~
 
 \begin{table}[th]
 \centering
-\caption{Dopełnanie danych do pełnego bloku. Dopełnienie zaznaczone zostało kolorem niebieskiem.}
+\caption{Dopełnanie danych do pełnego bloku. Dopełnienie zaznaczone zostało kolorem niebieskiem i pogrubieniem.}
 {\footnotesize Dane ,,Witaj swiecie'' (13 bajtów) zostają dopełnione 3 bajtami o wartości 3 (0x03):}
 
 \texttt{0x57 0x69 0x74 0x61\\
 0x6a 0x20 0x73 0x77\\
 0x69 0x65 0x63 0x69\\
-0x65 {\color[rgb]{0,0,1} 0x03 0x03 0x03}}
+0x65 {\color[rgb]{0,0,1}\bfseries 0x03 0x03 0x03}}
 
 {\footnotesize Dane ,,Witaj swiecie !!'' (16 bajtów) zostają dopełnione 16 bajtami o wartości 16 (0x10):}
 
@@ -140,7 +135,7 @@ Przykłady dopełniania danych o różnych długościach przedstawiono w tabeli~
 0x6a 0x20 0x73 0x77\\
 0x69 0x65 0x63 0x69\\
 0x65 0x20 0x21 0x21\\
-{\color[rgb]{0,0,1}
+{\color[rgb]{0,0,1}\bfseries
 0x10 0x10 0x10 0x10\\
 0x10 0x10 0x10 0x10\\
 0x10 0x10 0x10 0x10\\
@@ -153,7 +148,7 @@ Przykłady dopełniania danych o różnych długościach przedstawiono w tabeli~
 
 Kod implementujący szyfrowanie danych przedstawiono w tabeli~\ref{lst:encrypt} w dodatku~\ref{app:codesamples}.
 
-Właściwe kroki potrzebne do odszyfrowania zawartości wypisano poniżej.
+Właściwe kroki potrzebne do odszyfrowania danych wypisano poniżej.
 
 \begin{enumerate}
 \item Oddzielenie wektora inicjalizacyjnego od szyfrogramu.
@@ -177,7 +172,9 @@ Implementacja algorytmu AES pochodzi z biblioteki \emph{AVR-Crypto-Lib}. Jest to
 \section{Uwierzytelnienie wiadomości}
 \label{sec:auth}
 
-Uwierzytelnienie wiadomości odbywa się poprzez dołączenie do zawartości MAC. MAC dla danej wiadomości tworzony jest za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie ECBC-MAC. Wektor inicjalizacyjny wypełniony jest zerami i nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z wektorem inicjalizacyjnym użytym do szyfrowania, a nie tekst jawny. Długość szyfrogramu wraz z wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a więc nie jest stosowane dopełnianie.
+%todo przyklad uwierzytelnienia
+
+Uwierzytelnienie wiadomości odbywa się poprzez dołączenie do MAC do bloku danych. Dla danej wiadomości MAC tworzony jest za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie ECBC-MAC. Wektor inicjalizacyjny wypełniony jest zerami i nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z wektorem inicjalizacyjnym użytym do szyfrowania, a nie tekst jawny. Długość szyfrogramu wraz z wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a więc nie jest stosowane dopełnianie.
 
 Tryb ECBC-MAC to tryb CBC-MAC, którego wynik jest dodatkowo szyfrowany innym kluczem niż ten użyty do CBC-MAC. W tej pracy do CBC-MAC użyty jest klucz służący do uwierzytelniania, a wynik CBC-MAC jest szyfrowany używając klucza służącego do szyfrowania.
 

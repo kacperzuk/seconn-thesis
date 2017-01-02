@@ -1,6 +1,8 @@
 \chapter{Charakterystyka platformy sprzętowej}
 \label{cha:hardware}
 
+Mikropocesory Atmel AVR są w większości 8-bitowe i na takich skupia się praca. Rodzina AVR jest szeroka, kilka wybranych modeli przedstawiono w tabeli \ref{tab:avrmodels}. W pracy wykorzystany został model ATmega32u4 z 2,5 kilobajta SRAM~\cite{Atmega32}.
+
 \begin{table}[h]
 \centering
 \caption{Wybrane modele AVR wraz z ich parametrami}
@@ -21,8 +23,6 @@
 \end{tabular}
 \label{tab:avrmodels}
 \end{table}
-
-Mikropocesory Atmel AVR są w większości 8-bitowe i na takich skupia się praca. Rodzina AVR jest szeroka, kilka wybranych modeli przedstawiono w tabeli \ref{tab:avrmodels}. W pracy wykorzystany został model ATmega32u4 z 2,5 kilobajta SRAM~\cite{Atmega32}.
 
 SRAM jest głównym ograniczeniem w implementacji uwierzytelniania, ponieważ 32 bajty nie są wystaczające do przeprowadzania operacji kryptograficznych, przy których sam klucz zajmuje 16 lub 32 bajty. Należy też pamiętać, że obsługa bezpiecznego połączenia nie może zajmować całości pamięci. Część pamięci należy przeznaczyć na obsługę peryferiów oraz właściwą logikę programu.
 
