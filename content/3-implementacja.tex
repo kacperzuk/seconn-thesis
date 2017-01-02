@@ -53,6 +53,8 @@ Odbiorca powinien zweryfikować:
 
 W przypadku niezgodności któregokolwiek elementu wiadomość powinna zostać zignorowana.
 
+Narzut pamięci operacyjnej implementacji protokołu wynosi około 2 KB. Narzut na rozmiar programu to 14.6 KB.
+
 \section{Nawiązywanie połączenia}
 
 \begin{figure}[h]
@@ -96,7 +98,7 @@ Każdy z węzłów po odebraniu HelloRequest używa odebranego klucza publiczneg
 
 Z sekretu będącego wynikiem algorytmu ECDH liczony jest skrót przy użyciu algorytmu SHA-256. Następnie jest on dzielony na dwie części po 128-bitów. Pierwsza część staje się współdzielonym kluczem używanym do szyfrowania, druga część staje się współdzielonym kluczem używanym do uwierzytelniania.
 
-Implementacja algorytmu ECDH z krzywą eliptyczną P-256 pochodzi z biblioteki \emph{micro-ecc}. Jest to jedyna darmowa biblioteka implementująca ECDH.
+Implementacja algorytmu ECDH z krzywą eliptyczną P-256 pochodzi z biblioteki \emph{micro-ecc}. Jest to jedyna darmowa biblioteka implementująca ECDH. Wygenerowanie wspólnego sekretu na mikroprocesorze ATmega32u4 trwa do 4350 ms, nie uwzględniając generowania liczb losowych, używanych przez bibliotekę \emph{micro-ecc} do zapobiegania atakom typu \emph{side-channel}. Przy uwzględnieniu generowania liczb losowych metodą opisaną w Dodatku \ref{app:randgen} czas ten rośnie do 4500ms.
 
 \section{Szyfrowanie i deszyfrowanie danych}
 \label{sec:encrypt}
@@ -146,7 +148,7 @@ Przykłady dopełniania danych o różnych długościach przedstawiono w tabeli~
 \label{tab:padding}
 \end{table}
 
-Kod implementujący szyfrowanie danych przedstawiono w tabeli~\ref{lst:encrypt} w dodatku~\ref{app:codesamples}.
+Kod implementujący szyfrowanie danych przedstawiono w tabeli~\ref{lst:encrypt} w dodatku~\ref{app:codesamples}. Zaszyfrowanie 32 bajtów danych na mikroprocesorze ATmega32u4 trwa do 8 ms bez uwzględnienia czasu potrzebnego do wygenerowania losowego wektora inicjalizacyjnego. Przy generowaniu losowych danych metodą opisaną w Dodatku \ref{app:randgen} czas ten rośnie do 64 ms.
 
 Właściwe kroki potrzebne do odszyfrowania danych wypisano poniżej.
 
@@ -165,7 +167,7 @@ Właściwe kroki potrzebne do odszyfrowania danych wypisano poniżej.
 \item Usunięcie ostatnich $ N $ bajtów.
 \end{enumerate}
 
-Kod implementujący odszyfrowanie danych przedstawiono w tabeli~\ref{lst:decrypt} w dodatku~\ref{app:codesamples}.
+Kod implementujący odszyfrowanie danych przedstawiono w tabeli~\ref{lst:decrypt} w dodatku~\ref{app:codesamples}. Zdeszyfrowanie 32 bajtów danych na mikroprocesorze ATmega32u4 trwa do 8 ms.
 
 Implementacja algorytmu AES pochodzi z biblioteki \emph{AVR-Crypto-Lib}. Jest to najlepiej udokumentowana, darmowa biblioteka implementująca algorytm AES. Implementacja trybu CBC oraz algorytmu dopełniania zostały zrealizowane w ramach pracy.
 
@@ -187,6 +189,6 @@ Właściwe kroki potrzebne do obliczenia kodu uwierzytelniającego opisano poni�
 
 Węzeł wysyłający dokleja kod uwierzytelniający przed szyfrogramem. Węzeł odbierający oddziela otrzymany kod od szyfrogramu, oblicza kod uwierzytelniający dla danego szyfrogramu i porównuje, czy zgadza się on z kodem otrzymanym. Jeżeli kod obliczony różni się od kodu otrzymanego, cała wiadomość jest ignorowana.
 
-Kod implementujący obliczanie MAC przedstawiono w tabeli~\ref{lst:mac} w dodatku~\ref{app:codesamples}.
+Kod implementujący obliczanie MAC przedstawiono w tabeli~\ref{lst:mac} w dodatku~\ref{app:codesamples}. Wygenerowanie kodu uwierzytelniającego dla 16 bajtów danych na mikroprocesorze ATmega32u4 trwa do 8 ms.
 
 Implementacja trybu ECBC-MAC została zrealizowana w ramach pracy.
