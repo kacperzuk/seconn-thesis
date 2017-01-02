@@ -59,7 +59,7 @@ size_t _seconn_crypto_encrypt(void *destination, void *source, size_t length, ae
 \label{lst:decrypt}
 \begin{lstlisting}
 size_t _seconn_crypto_decrypt(void *destination, void *source, size_t length, aes128_key_t enc_key) {
-    uint8_t *src = ((uint8_t*)source);
+    uint8_t *src = (uint8_t*)source;
     uint8_t *dest = (uint8_t*)destination;
 
     memset(&ctx, 0, sizeof(aes128_ctx_t));
