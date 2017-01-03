@@ -2,8 +2,10 @@
 
 set -e
 
-pdflatex praca.tex
+LX="pdflatex -interaction errorstopmode"
+
+$LX praca.tex
 bibtex praca
 #makeglossaries praca
-pdflatex praca.tex
-pdflatex praca.tex
+$LX praca.tex
+$LX praca.tex
