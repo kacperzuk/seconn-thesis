@@ -215,7 +215,7 @@ Implementacja algorytmu AES pochodzi z biblioteki \emph{AVR-Crypto-Lib}. Jest to
 
 %todo przyklad uwierzytelnienia
 
-Uwierzytelnienie wiadomości odbywa się poprzez dołączenie do MAC do bloku danych. Dla danej wiadomości MAC tworzony jest za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie ECBC-MAC. Wektor inicjalizacyjny wypełniony jest zerami i nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z wektorem inicjalizacyjnym użytym do szyfrowania, a nie tekst jawny. Długość szyfrogramu wraz z wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a więc nie jest stosowane dopełnianie.
+Uwierzytelnienie wiadomości odbywa się poprzez dołączenie MAC do bloku danych. Dla danej wiadomości MAC tworzony jest za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie ECBC-MAC. Wektor inicjalizacyjny wypełniony jest zerami i nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z wektorem inicjalizacyjnym użytym do szyfrowania, a nie tekst jawny. Długość szyfrogramu wraz z wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a więc nie jest stosowane dopełnianie.
 
 Tryb ECBC-MAC to tryb CBC-MAC, którego wynik jest dodatkowo szyfrowany innym kluczem niż ten użyty do CBC-MAC. W tej pracy do CBC-MAC użyty jest klucz służący do uwierzytelniania, a wynik CBC-MAC jest szyfrowany używając klucza służącego do szyfrowania.
 
@@ -228,6 +228,79 @@ Właściwe kroki potrzebne do obliczenia kodu uwierzytelniającego opisano poni�
 
 Węzeł wysyłający dokleja kod uwierzytelniający przed szyfrogramem. Węzeł odbierający oddziela otrzymany kod od szyfrogramu, oblicza kod uwierzytelniający dla danego szyfrogramu i porównuje, czy zgadza się on z kodem otrzymanym. Jeżeli kod obliczony różni się od kodu otrzymanego, cała wiadomość jest ignorowana.
 
-Kod implementujący obliczanie MAC przedstawiono w tabeli~\ref{lst:mac} w dodatku~\ref{app:codesamples}. Wygenerowanie kodu uwierzytelniającego dla 16 bajtów danych na mikroprocesorze ATmega32u4 trwa do 8 ms.
+Kod implementujący obliczanie MAC przedstawiono w tabeli~\ref{lst:mac} w dodatku~\ref{app:codesamples}. Wygenerowanie kodu uwierzytelniającego dla 32 bajtów danych na mikroprocesorze ATmega32u4 trwa do 8 ms.
 
 Implementacja trybu ECBC-MAC została zrealizowana w ramach pracy.
+
+\section{Złożoność implementacji}
+\label{cha:complexity}
+
+\FloatBarrier
+
+Stworzona biblioteka implementująca protokół posiada cztery zależności:
+
+\begin{itemize}
+    \item moduł \emph{AES} z biblioteki \emph{AVR-Crypto-Lib},
+    \item moduł \emph{gf256mul} wymagany do obliczeń na dużych liczbach z biblioteki \emph{AVR-Crypto-Lib},
+    \item moduł \emph{SHA-256} z biblioteki \emph{AVR-Crypto-Lib},
+    \item biblioteka \emph{micro-ecc}.
+\end{itemize}
+
+Za pomocą programu \emph{ctags} obliczono, że całość biblioteki wraz z zależnościami składa się ze 131 funkcji oraz 13 struktur. Dla kodu stworzonego w ramach pracy -- po odliczeniu zależności -- liczba funkcji to 13 a struktur to 5. Dodatkowe statystyki dotyczące linii kodu zaprezentowano w tabelach \ref{tab:stats} oraz \ref{tab:statssmall}, odpowiednio uwzględniając i pomijając zależności. Statystyki te wygenerowano przy pomocy programu \emph{cloc}.
+
+\begin{table}[h]
+\centering
+\caption{Statystyki złożoności kodu źródłowego}
+\begin{subtable}{\textwidth}
+    \centering
+\begin{tabular}{|l|l|l|l|l|}
+    \hline
+    \textbf{Typ pliku}  &
+    \textbf{Liczba plików}  &
+    \textbf{Liczba linii komentarzy}  &
+    \textbf{Liczba linii kodu} \\
+    \hline
+    Nagłówek C/C++ & 24 & 921 & 2466 \\
+    \hline
+    C & 13 & 402 & 1772 \\
+    \hline
+    C++ & 3 & 11 & 303 \\
+    \hline
+    Asembler & 1 & 49 & 39 \\
+    \hline
+    \hline
+    \textbf{Suma} &
+    \textbf{41} &
+    \textbf{1383} &
+    \textbf{4580} \\
+    \hline
+\end{tabular}
+\caption{Statystyki złożoności kodu źródłowego biblioteki wraz z zależnościami.}
+\label{tab:stats}
+\end{subtable}
+
+\begin{subtable}{\textwidth}
+    \centering
+\begin{tabular}{|l|l|l|l|}
+    \hline
+    \textbf{Typ pliku}  &
+    \textbf{Liczba plików}  &
+    \textbf{Liczba linii komentarzy}  &
+    \textbf{Liczba linii kodu} \\
+    \hline
+    Nagłówek C/C++ & 3 & 83 & 98 \\
+    \hline
+    C++ & 3 & 11 & 303 \\
+    \hline
+    \hline
+    \textbf{Suma} &
+    \textbf{6} &
+    \textbf{94} &
+    \textbf{401} \\
+    \hline
+\end{tabular}
+\caption{Statystyki złożoności kodu źródłowego biblioteki z wyłączeniem \mbox{zależności}.}
+\label{tab:statssmall}
+\end{subtable}
+\end{table}
+
