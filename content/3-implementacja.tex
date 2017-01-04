@@ -42,14 +42,18 @@ Istotnym elementem jest też wielkość domyślnych buforów. \emph{Arduino} w~
 \section{Podstawowe struktury protokołu}
 \label{sec:proto}
 
-\begin{figure}[ht]
+Podstawową jednostką protokołu są wiadomości zbudowane według schematu zaprezentowanego na~Rys. \ref{fig:message-def}. Zdefiniowane typy wiadomości są przedstawione w~tabeli \ref{tab:recordtypes}. Budowę przykładowych wiadomości przedstawiono na~rysunkach \ref{fig:hellorequestsample}, \ref{fig:helloresponsesample} oraz~\ref{fig:encrypteddatasample} w~dodatku \ref{app:samplerecords}.
+
+\FloatBarrier
+
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{images/wiadomosc.png}
 \caption{Budowa wiadomości w protokole komunikacji.}
 \label{fig:message-def}
 \end{figure}
 
-\begin{table}[t]
+\begin{table}[h]
 \centering
 \caption{Typy wiadomości wraz z ich charakterystyką}
 \begin{tabular}{|p{2.3cm}|p{1.4cm}|l|p{2.9cm}|p{3.1cm}|}
@@ -69,8 +73,6 @@ Istotnym elementem jest też wielkość domyślnych buforów. \emph{Arduino} w~
 \end{tabular}
 \label{tab:recordtypes}
 \end{table}
-
-Podstawową jednostką protokołu są wiadomości zbudowane według schematu zaprezentowanego na~Rys. \ref{fig:message-def}. Zdefiniowane typy wiadomości są przedstawione w~tabeli \ref{tab:recordtypes}. Budowę przykładowych wiadomości przedstawiono na~rysunkach \ref{fig:hellorequestsample}, \ref{fig:helloresponsesample} oraz~\ref{fig:encrypteddatasample} w~dodatku \ref{app:samplerecords}.
 
 Odbiorca powinien zweryfikować:
 
