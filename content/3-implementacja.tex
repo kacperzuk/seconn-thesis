@@ -1,7 +1,7 @@
 \chapter{Implementacja protokołu komunikacji}
 \label{cha:implementacja}
 
-Protokół komunikacji między dwoma węzłami zaprojektowano i zaimplementowano z następującymi założeniami:
+Protokół komunikacji między dwoma węzłami zaprojektowano i~zaimplementowano z~następującymi założeniami:
 
 \begin{itemize}
 \item pełna funkcjonalność przy jak najmniejszych wymaganiach sprzętowych, w szczególności przy dostępnej małej ilości pamięci operacyjnej,
@@ -12,9 +12,9 @@ Protokół komunikacji między dwoma węzłami zaprojektowano i zaimplementowano
 \section{Charakterystyka platformy sprzętowej}
 \label{cha:hardware}
 
-Mikropocesory Atmel AVR są w większości 8-bitowe i na takich skupia się praca. Rodzina AVR jest szeroka, kilka wybranych modeli przedstawiono w tabeli \ref{tab:avrmodels}. W pracy wykorzystany został model ATmega32u4 z 2,5 kilobajta SRAM~\cite{Atmega32}.
+Mikropocesory Atmel AVR są w~większości 8-bitowe i~na takich skupia się praca. Rodzina AVR jest szeroka, kilka wybranych modeli przedstawiono w~tabeli \ref{tab:avrmodels}. W~pracy wykorzystany został model ATmega32u4 z~2,5 kilobajta SRAM~\cite{Atmega32}.
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \caption{Wybrane modele AVR wraz z ich parametrami}
 \begin{tabular}{|l|l|l|l|l|}
@@ -25,24 +25,24 @@ Mikropocesory Atmel AVR są w większości 8-bitowe i na takich skupia się prac
     \textbf{Taktowanie procesora}  &
     \textbf{Liczba linii I/O} \\
     \hline
-    ATtiny4 \cite{Attiny4}& 32 B & 1.8 - 5.5 V & do 12 MHz & 4\\
+    ATtiny4 \cite{Attiny4}& 32 B & 1.8 - 5.5 V & do~12 MHz & 4\\
     \hline
-    ATmega32u4 \cite{Atmega32} & 2,5 KB & 2.7 - 5.5 V & do 16 MHz & 26\\
+    ATmega32u4 \cite{Atmega32} & 2,5 KB & 2.7 - 5.5 V & do~16 MHz & 26\\
     \hline
-    ATxmega384C3 \cite{Atxmega384} & 32 KB & 1.6 - 3.6 V & do 32 MHz & 50\\
+    ATxmega384C3 \cite{Atxmega384} & 32 KB & 1.6 - 3.6 V & do~32 MHz & 50\\
     \hline
 \end{tabular}
 \label{tab:avrmodels}
 \end{table}
 
-SRAM jest głównym ograniczeniem w implementacji uwierzytelniania, ponieważ 32 bajty nie są wystaczające do przeprowadzania operacji kryptograficznych, przy których sam klucz zajmuje 16 lub 32 bajty. Należy też pamiętać, że obsługa bezpiecznego połączenia nie może zajmować całości pamięci. Część pamięci należy przeznaczyć na obsługę peryferiów oraz właściwą logikę programu.
+SRAM jest głównym ograniczeniem w~implementacji uwierzytelniania, ponieważ~32 bajty nie są wystaczające do~przeprowadzania operacji kryptograficznych, przy których sam klucz zajmuje 16 lub~32 bajty. Należy też pamiętać, że~obsługa bezpiecznego połączenia nie może zajmować całości pamięci. Część pamięci należy przeznaczyć na~obsługę peryferiów oraz~właściwą logikę programu.
 
-Istotnym elementem jest też wielkość domyślnych buforów. \emph{Arduino} w modułach \emph{Serial} oraz \emph{SoftwareSerial} domyślnie używa 16- lub 64-bajtowego (w zależności od ilości dostępnej pamięci) buforu na przychodzące dane\footnote{https://github.com/arduino/Arduino/blob/master/hardware/arduino/avr/cores/arduino/HardwareSerial.h}. Przy wiadomościach dłuższych niż 32 bajty oznacza to, że zbyt długie przetwarzanie jednej wiadomości spowoduje błędne odebranie następnej, jeżeli zostanie ona za szybko wysłana.
+Istotnym elementem jest też wielkość domyślnych buforów. \emph{Arduino} w~modułach \emph{Serial} oraz~\emph{SoftwareSerial} domyślnie używa 16- lub~64-bajtowego (w zależności od~ilości dostępnej pamięci) buforu na~przychodzące dane\footnote{https://github.com/arduino/Arduino/blob/master/hardware/arduino/avr/cores/arduino/HardwareSerial.h}. Przy wiadomościach dłuższych niż 32 bajty oznacza to, że~zbyt długie przetwarzanie jednej wiadomości spowoduje błędne odebranie następnej, jeżeli zostanie ona za~szybko wysłana.
 
 \section{Podstawowe struktury protokołu}
 \label{sec:proto}
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{images/wiadomosc.png}
 \caption{Budowa wiadomości w protokole komunikacji.}
@@ -70,7 +70,7 @@ Istotnym elementem jest też wielkość domyślnych buforów. \emph{Arduino} w 
 \label{tab:recordtypes}
 \end{table}
 
-Podstawową jednostką protokołu są wiadomości zbudowane według schematu zaprezentowanego na Rys. \ref{fig:message-def}. Zdefiniowane typy wiadomości są przedstawione w tabeli \ref{tab:recordtypes}. Budowę przykładowych wiadomości przedstawiono na rysunkach \ref{fig:hellorequestsample}, \ref{fig:helloresponsesample} oraz \ref{fig:encrypteddatasample} w dodatku \ref{app:samplerecords}.
+Podstawową jednostką protokołu są wiadomości zbudowane według schematu zaprezentowanego na~Rys. \ref{fig:message-def}. Zdefiniowane typy wiadomości są przedstawione w~tabeli \ref{tab:recordtypes}. Budowę przykładowych wiadomości przedstawiono na~rysunkach \ref{fig:hellorequestsample}, \ref{fig:helloresponsesample} oraz~\ref{fig:encrypteddatasample} w~dodatku \ref{app:samplerecords}.
 
 Odbiorca powinien zweryfikować:
 
@@ -81,13 +81,13 @@ Odbiorca powinien zweryfikować:
 \item w przypadku typów HelloResponse oraz EncryptedData -- prawidłowość kodu uwierzytelniającego.
 \end{itemize}
 
-W przypadku niezgodności któregokolwiek elementu wiadomość powinna zostać zignorowana.
+W~przypadku niezgodności któregokolwiek elementu wiadomość powinna zostać zignorowana.
 
-Narzut pamięci operacyjnej implementacji protokołu wynosi około 2 KB. Narzut na rozmiar programu to 14.6 KB.
+Narzut pamięci operacyjnej implementacji protokołu wynosi około 2 KB. Narzut na~rozmiar programu to 14.6 KB.
 
 \section{Nawiązywanie połączenia}
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \begin{BVerbatim}
 Nawiązujący połączenie              Odbierający połączenie
@@ -113,31 +113,31 @@ Nawiązujący połączenie              Odbierający połączenie
 \label{fig:handshake}
 \end{figure}
 
-Kolejność przesyłania wiadomości w celu nawiązania połączenia przedstawiona została na rysunku~\ref{fig:handshake}. HelloRequest zawiera klucz publiczny węzła, który go wysyła. Węzeł, który odbiera HelloRequest, używa swojego klucza publicznego oraz klucza publicznego z odebranej wiadomości do ustalenia sekretnego klucza. Nawiązującym połączenie może być dowolny węzeł.
+Kolejność przesyłania wiadomości w~celu nawiązania połączenia przedstawiona została na~rysunku~\ref{fig:handshake}. HelloRequest zawiera klucz publiczny węzła, który~go wysyła. Węzeł, który~odbiera HelloRequest, używa swojego klucza publicznego oraz~klucza publicznego z~odebranej wiadomości do~ustalenia sekretnego klucza. Nawiązującym połączenie może być dowolny węzeł.
 
-Po ustaleniu wspólnego klucza węzły mogą wysłać HelloResponse, który zawiera zaszyfrowany i uwierzytelniony klucz publiczny pochodzący z wysyłającego węzła. Jeżeli węzeł odbierający wiadomość skutecznie potwierdzi, że jest ona prawidłowo uwierzytelniona, a zdeszyfrowany klucz publiczny pokrywa się z kluczem przesłanym wcześniej w HelloRequest, połączenie uznawane jest za nawiązane. Jeżeli przed odebraniem HelloResponse odebrany był więcej niż jeden HelloRequest, brana pod uwagę jest wiadomość odebrana jako ostatnia. Po nawiązaniu połączenia wymieniane mogą być tylko wiadomości typu EncryptedData.
+Po~ustaleniu wspólnego klucza węzły mogą wysłać HelloResponse, który~zawiera zaszyfrowany i~uwierzytelniony klucz publiczny pochodzący z~wysyłającego węzła. Jeżeli węzeł odbierający wiadomość skutecznie potwierdzi, że~jest ona prawidłowo uwierzytelniona, a~zdeszyfrowany klucz publiczny pokrywa się z~kluczem przesłanym wcześniej w~HelloRequest, połączenie uznawane jest za~nawiązane. Jeżeli przed odebraniem HelloResponse odebrany był więcej niż jeden HelloRequest, brana pod~uwagę jest wiadomość odebrana jako ostatnia. Po~nawiązaniu połączenia wymieniane mogą być tylko wiadomości typu EncryptedData.
 
-Istotne jest, że protokół nie zapewnia autentyczności danego klucza publicznego. Powinno to zostać zweryfikowane niezależnie, na przykład poprzez wyświetlenie skrótu klucza użytkownikowi i poproszenie go o potwierdzenie, że na obu urządzeniach uczestniczących w komunikacji jest wyświetlony taki sam klucz.
+Istotne jest, że~protokół nie zapewnia autentyczności danego klucza publicznego. Powinno to zostać zweryfikowane niezależnie, na~przykład poprzez~wyświetlenie skrótu klucza użytkownikowi i~poproszenie go o~potwierdzenie, że~na obu urządzeniach uczestniczących w~komunikacji jest wyświetlony taki sam klucz.
 
-Protokół zakłada też, że przesyłanie danych jest niezawodne, połączeniowe oraz zachowana jest ich kolejność. Nie są więc zaimplementowane retransmisje ani wykrywanie, czy drugi węzeł rzeczywiście nasłuchuje na przychodzące dane.
+Protokół zakłada też, że~przesyłanie danych jest niezawodne, połączeniowe oraz~zachowana jest ich kolejność. Nie są więc zaimplementowane retransmisje ani wykrywanie, czy~drugi węzeł rzeczywiście nasłuchuje na~przychodzące dane.
 
 \section{Generowanie współdzielonego klucza}
 \label{sec:sharedkey}
 
-Każdy z węzłów po odebraniu HelloRequest używa odebranego klucza publicznego oraz swojego klucza publicznego do ustalenia wspólnego sekretu przy użyciu algorytmu ECDH \emph{(ang. Elliptic curve Diffie--Hellman)} oraz proponowanej przez NIST krzywej eliptycznej P-256~\cite{kerry2013digital} (w RFC 5480 nazwaną krzywą secp256r1~\cite{turner2009elliptic}).
+Każdy z~węzłów po~odebraniu HelloRequest używa odebranego klucza publicznego oraz~swojego klucza publicznego do~ustalenia wspólnego sekretu przy użyciu algorytmu ECDH \emph{(ang. Elliptic curve Diffie--Hellman)} oraz~proponowanej przez NIST krzywej eliptycznej P-256~\cite{kerry2013digital} (w RFC 5480 nazwaną krzywą secp256r1~\cite{turner2009elliptic}).
 
-Z sekretu będącego wynikiem algorytmu ECDH liczony jest skrót przy użyciu algorytmu SHA-256. Następnie jest on dzielony na dwie części po 128-bitów. Pierwsza część staje się współdzielonym kluczem używanym do szyfrowania, druga część staje się współdzielonym kluczem używanym do uwierzytelniania.
+Z~sekretu będącego wynikiem algorytmu ECDH liczony jest skrót przy użyciu algorytmu SHA-256. Następnie jest on dzielony na~dwie części po~128-bitów. Pierwsza część staje się współdzielonym kluczem używanym do~szyfrowania, druga część staje się współdzielonym kluczem używanym do~uwierzytelniania.
 
-Implementacja algorytmu ECDH z krzywą eliptyczną P-256 pochodzi z biblioteki \emph{micro-ecc}. Jest to jedyna darmowa biblioteka implementująca ECDH. Wygenerowanie wspólnego sekretu na mikroprocesorze ATmega32u4 trwa do 4350 ms, nie uwzględniając generowania liczb losowych, używanych przez bibliotekę \emph{micro-ecc} do zapobiegania atakom typu \emph{side-channel}. Przy uwzględnieniu generowania liczb losowych metodą opisaną w Dodatku \ref{app:randgen} czas ten rośnie do 4500ms.
+Implementacja algorytmu ECDH z~krzywą eliptyczną P-256 pochodzi z~biblioteki \emph{micro-ecc}. Jest to jedyna darmowa biblioteka implementująca ECDH. Wygenerowanie wspólnego sekretu na~mikroprocesorze ATmega32u4 trwa do~4350 ms, nie uwzględniając generowania liczb losowych, używanych przez bibliotekę \emph{micro-ecc} do~zapobiegania atakom typu \emph{side-channel}. Przy uwzględnieniu generowania liczb losowych metodą opisaną w~Dodatku \ref{app:randgen} czas ten rośnie do~4500ms.
 
 \section{Szyfrowanie i deszyfrowanie danych}
 \label{sec:encrypt}
 
-Szyfrowanie bloku danych w wiadomości odbywa się za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie CBC. Wektor inicjalizacyjny jest losowy i dołączany do danych przesyłanej wiadomości przed szyfrogramem. Tekst jawny jest dopełniany do pełnego bloku według algorytmu zdefiniowanego w PKCS\#7~\cite{kaliski1998pkcs}.
+Szyfrowanie bloku danych w~wiadomości odbywa się za~pomocą szyfru blokowego AES ze~128-bitowym kluczem używanym w~trybie CBC. Wektor inicjalizacyjny jest losowy i~dołączany do~danych przesyłanej wiadomości przed szyfrogramem. Tekst jawny jest dopełniany do~pełnego bloku według algorytmu zdefiniowanego w~PKCS\#7~\cite{kaliski1998pkcs}.
 
-Stworzona biblioteka nie posiada własnego źródła liczb losowych, musi zostać ono dostarczone w ramach integracji. Przykładowa metoda generowania liczb losowych na platformie Arduino została opisana w Dodatku \ref{app:randgen}.
+Stworzona biblioteka nie posiada własnego źródła liczb losowych, musi zostać ono dostarczone w~ramach integracji. Przykładowa metoda generowania liczb losowych na~platformie Arduino została opisana w~Dodatku \ref{app:randgen}.
 
-Właściwe kroki potrzebne do zaszyfrowania danych wypisano poniżej.
+Właściwe kroki potrzebne do~zaszyfrowania danych wypisano poniżej.
 
 \begin{enumerate}
 \item Dopełnienie tekstu jawnego do pełnego bloku:
@@ -149,19 +149,19 @@ Właściwe kroki potrzebne do zaszyfrowania danych wypisano poniżej.
 \item Doklejenie wektora inicjalizacyjnego przed szyfrogramem.
 \end{enumerate}
 
-Przykłady dopełniania danych o różnych długościach przedstawiono w tabeli~\ref{tab:padding}.
+Przykłady dopełniania danych o~różnych długościach przedstawiono w~tabeli~\ref{tab:padding}.
 
 \begin{table}[th]
 \centering
 \caption{Dopełnanie danych do pełnego bloku. Dopełnienie zaznaczone zostało kolorem niebieskiem i pogrubieniem.}
-{\footnotesize Dane ,,Witaj swiecie'' (13 bajtów) zostają dopełnione 3 bajtami o wartości 3 (0x03):}
+{\footnotesize Dane ,,Witaj swiecie'' (13 bajtów) zostają dopełnione 3 bajtami o~wartości 3 (0x03):}
 
 \texttt{0x57 0x69 0x74 0x61\\
 0x6a 0x20 0x73 0x77\\
 0x69 0x65 0x63 0x69\\
 0x65 {\color[rgb]{0,0,1}\bfseries 0x03 0x03 0x03}}
 
-{\footnotesize Dane ,,Witaj swiecie !!'' (16 bajtów) zostają dopełnione 16 bajtami o wartości 16 (0x10):}
+{\footnotesize Dane ,,Witaj swiecie !!'' (16 bajtów) zostają dopełnione 16 bajtami o~wartości 16 (0x10):}
 
 \texttt{0x57 0x69 0x74 0x61\\
 0x6a 0x20 0x73 0x77\\
@@ -178,9 +178,9 @@ Przykłady dopełniania danych o różnych długościach przedstawiono w tabeli~
 \label{tab:padding}
 \end{table}
 
-Kod implementujący szyfrowanie danych przedstawiono w tabeli~\ref{lst:encrypt} w dodatku~\ref{app:codesamples}. Zaszyfrowanie 32 bajtów danych na mikroprocesorze ATmega32u4 trwa do 8 ms bez uwzględnienia czasu potrzebnego do wygenerowania losowego wektora inicjalizacyjnego. Przy generowaniu losowych danych metodą opisaną w Dodatku \ref{app:randgen} czas ten rośnie do 64 ms.
+Kod implementujący szyfrowanie danych przedstawiono w~tabeli~\ref{lst:encrypt} w~dodatku~\ref{app:codesamples}. Zaszyfrowanie 32 bajtów danych na~mikroprocesorze ATmega32u4 trwa do~8 ms bez uwzględnienia czasu potrzebnego do~wygenerowania losowego wektora inicjalizacyjnego. Przy generowaniu losowych danych metodą opisaną w~Dodatku \ref{app:randgen} czas ten rośnie do~64 ms.
 
-Właściwe kroki potrzebne do odszyfrowania danych wypisano poniżej.
+Właściwe kroki potrzebne do~odszyfrowania danych wypisano poniżej.
 
 \begin{enumerate}
 \item Oddzielenie wektora inicjalizacyjnego od szyfrogramu.
@@ -197,31 +197,31 @@ Właściwe kroki potrzebne do odszyfrowania danych wypisano poniżej.
 \item Usunięcie ostatnich $ N $ bajtów.
 \end{enumerate}
 
-Kod implementujący odszyfrowanie danych przedstawiono w tabeli~\ref{lst:decrypt} w dodatku~\ref{app:codesamples}. Zdeszyfrowanie 32 bajtów danych na mikroprocesorze ATmega32u4 trwa do 8 ms.
+Kod implementujący odszyfrowanie danych przedstawiono w~tabeli~\ref{lst:decrypt} w~dodatku~\ref{app:codesamples}. Zdeszyfrowanie 32 bajtów danych na~mikroprocesorze ATmega32u4 trwa do~8 ms.
 
-Implementacja algorytmu AES pochodzi z biblioteki \emph{AVR-Crypto-Lib}. Jest to najlepiej udokumentowana, darmowa biblioteka implementująca algorytm AES. Implementacja trybu CBC oraz algorytmu dopełniania zostały zrealizowane w ramach pracy.
+Implementacja algorytmu AES pochodzi z~biblioteki \emph{AVR-Crypto-Lib}. Jest to najlepiej udokumentowana, darmowa biblioteka implementująca algorytm AES. Implementacja trybu CBC oraz~algorytmu dopełniania zostały zrealizowane w~ramach pracy.
 
 \section{Uwierzytelnienie wiadomości}
 \label{sec:auth}
 
 %todo przyklad uwierzytelnienia
 
-Uwierzytelnienie wiadomości odbywa się poprzez dołączenie MAC do bloku danych. Dla danej wiadomości MAC tworzony jest za pomocą szyfru blokowego AES ze 128-bitowym kluczem używanym w trybie ECBC-MAC. Wektor inicjalizacyjny wypełniony jest zerami i nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z wektorem inicjalizacyjnym użytym do szyfrowania, a nie tekst jawny. Długość szyfrogramu wraz z wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a więc nie jest stosowane dopełnianie.
+Uwierzytelnienie wiadomości odbywa się poprzez~dołączenie MAC do~bloku danych. Dla danej wiadomości MAC tworzony jest za~pomocą szyfru blokowego AES ze~128-bitowym kluczem używanym w~trybie ECBC-MAC. Wektor inicjalizacyjny wypełniony jest zerami i~nie jest przesyłany. Uwierzytelniany jest kompletny szyfrogram wraz z~wektorem inicjalizacyjnym użytym do~szyfrowania, a~nie tekst jawny. Długość szyfrogramu wraz z~wektorem inicjalizacyjnym zawsze będzie wielokrotnością długości bloku, a~więc nie jest stosowane dopełnianie.
 
-Tryb ECBC-MAC to tryb CBC-MAC, którego wynik jest dodatkowo szyfrowany innym kluczem niż ten użyty do CBC-MAC. W tej pracy do CBC-MAC użyty jest klucz służący do uwierzytelniania, a wynik CBC-MAC jest szyfrowany używając klucza służącego do szyfrowania.
+Tryb ECBC-MAC to tryb CBC-MAC, którego~wynik jest dodatkowo szyfrowany innym kluczem niż ten użyty do~CBC-MAC. W~tej pracy do~CBC-MAC użyty jest klucz służący do~uwierzytelniania, a~wynik CBC-MAC jest szyfrowany używając klucza służącego do~szyfrowania.
 
-Właściwe kroki potrzebne do obliczenia kodu uwierzytelniającego opisano poniżej.
+Właściwe kroki potrzebne do~obliczenia kodu uwierzytelniającego opisano poniżej.
 
 \begin{enumerate}
 \item Obliczenie ostatniego bloku będącego wynikiem zaszyfrowania szyfrogramu wraz z wektorem inicjalizacyjnym w trybie CBC z wektorem inicjalizacyjnym wypełnionym zerami przy użyciu klucza przeznaczonego do uwierzytelniania.
 \item Zaszyfrowanie bloku przy wykorzystaniu AES i klucza przeznaczonego do szyfrowania.
 \end{enumerate}
 
-Węzeł wysyłający dokleja kod uwierzytelniający przed szyfrogramem. Węzeł odbierający oddziela otrzymany kod od szyfrogramu, oblicza kod uwierzytelniający dla danego szyfrogramu i porównuje, czy zgadza się on z kodem otrzymanym. Jeżeli kod obliczony różni się od kodu otrzymanego, cała wiadomość jest ignorowana.
+Węzeł wysyłający dokleja kod uwierzytelniający przed szyfrogramem. Węzeł odbierający oddziela otrzymany kod od~szyfrogramu, oblicza kod uwierzytelniający dla danego szyfrogramu i~porównuje, czy~zgadza się on z~kodem otrzymanym. Jeżeli kod obliczony różni się od kodu otrzymanego, cała wiadomość jest ignorowana.
 
-Kod implementujący obliczanie MAC przedstawiono w tabeli~\ref{lst:mac} w dodatku~\ref{app:codesamples}. Wygenerowanie kodu uwierzytelniającego dla 32 bajtów danych na mikroprocesorze ATmega32u4 trwa do 8 ms.
+Kod implementujący obliczanie MAC przedstawiono w~tabeli~\ref{lst:mac} w~dodatku~\ref{app:codesamples}. Wygenerowanie kodu uwierzytelniającego dla 32 bajtów danych na~mikroprocesorze ATmega32u4 trwa do~8 ms.
 
-Implementacja trybu ECBC-MAC została zrealizowana w ramach pracy.
+Implementacja trybu ECBC-MAC została zrealizowana w~ramach pracy.
 
 \section{Złożoność implementacji}
 \label{cha:complexity}
@@ -231,15 +231,15 @@ Implementacja trybu ECBC-MAC została zrealizowana w ramach pracy.
 Stworzona biblioteka implementująca protokół posiada cztery zależności:
 
 \begin{itemize}
-    \item moduł \emph{AES} z biblioteki \emph{AVR-Crypto-Lib},
-    \item moduł \emph{gf256mul} wymagany do obliczeń na dużych liczbach z biblioteki \emph{AVR-Crypto-Lib},
-    \item moduł \emph{SHA-256} z biblioteki \emph{AVR-Crypto-Lib},
+    \item moduł \emph{AES} z~biblioteki \emph{AVR-Crypto-Lib},
+    \item moduł \emph{gf256mul} wymagany do~obliczeń na~dużych liczbach z~biblioteki \emph{AVR-Crypto-Lib},
+    \item moduł \emph{SHA-256} z~biblioteki \emph{AVR-Crypto-Lib},
     \item biblioteka \emph{micro-ecc}.
 \end{itemize}
 
-Za pomocą programu \emph{ctags} obliczono, że całość biblioteki wraz z zależnościami składa się ze 131 funkcji oraz 13 struktur. Dla kodu stworzonego w ramach pracy -- po odliczeniu zależności -- liczba funkcji to 13 a struktur to 5. Dodatkowe statystyki dotyczące linii kodu zaprezentowano w tabelach \ref{tab:stats} oraz \ref{tab:statssmall}, odpowiednio uwzględniając i pomijając zależności. Statystyki te wygenerowano przy pomocy programu \emph{cloc}.
+Za~pomocą programu \emph{ctags} obliczono, że~całość biblioteki wraz z~zależnościami składa się ze~131 funkcji oraz~13 struktur. Dla kodu stworzonego w~ramach pracy -- po~odliczeniu zależności -- liczba funkcji to 13 a~struktur to 5. Dodatkowe statystyki dotyczące linii kodu zaprezentowano w~tabelach \ref{tab:stats} oraz~\ref{tab:statssmall}, odpowiednio uwzględniając i~pomijając zależności. Statystyki te wygenerowano przy pomocy programu \emph{cloc}.
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \caption{Statystyki złożoności kodu źródłowego}
 \begin{subtable}{\textwidth}

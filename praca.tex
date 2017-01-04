@@ -1,3 +1,4 @@
+\batchmode
 \documentclass[oneside,11pt]{aghdpl}
 
 % \documentclass[oneside,11pt]{aghdpl}
@@ -182,6 +183,8 @@
     \renewcommand{\footrulewidth}{0pt}
 }
 
+\scrollmode
+
 \setcounter{tocdepth}{2}
 \tableofcontents
 \clearpage
@@ -201,9 +204,9 @@
 \include{content/dodatekB}
 \include{content/dodatekC}
 \include{content/dodatekD}
+\batchmode
 \include{content/dodatekE}
 \end{appendices}
 % itd.
-
 
 \end{document}

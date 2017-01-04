@@ -2,4 +2,12 @@
 \addcontentsline{toc}{chapter}{Podsumowanie}
 \label{cha:podsumowanie}
 
-?
+Rodzina mikroprocesorów AVR jest często używana do~prototypowania urządzeń, które~przesyłają poufne dane lub~odbierają zdalne komendy, takich jak~bezprzewodowe tokeny, sensory oraz~inteligentne domy. Takie urządzenia powinny być zabezpieczone zarówno przed podsłuchiwaniem informacji jak~i~przed wykonywaniem nieupoważnionych poleceń.
+
+W~pracy przedstawiono rozwiązanie w~postaci protokołu komunikacji oraz~biblioteki programistycznej dla urządzeń AVR, które~ma na~celu zapewnienie poufności, autentyczności oraz~integralności przesyłanych danych. Szczególny nacisk postawiono na~łatwość integracji.
+
+Zaprezentowano różne metody uwierzytelniania i~wybrano algorytmy ECDH \emph{(ang. Elliptic Curve Diffie--Hellman)} oraz~AES użytym w~trybie ECBC-MAC \emph{(ang. Encrypt-last-block Cipher Block Chaining - Message Authentication Code)}. Za~ich przewagę nad~innymi rozwiązaniami uznano dużą wydajność, niskie wymagania dotyczące pamięci operacyjnej oraz~jakość implementacji dostępnych na~urządzenia AVR. Dodatkowo w~celu zapewnienia poufności danych wybrano szyfrowanie algorytmem AES użytym w~trybie CBC. Ograniczeniem tej metody jest brak utajnienia przekazywania \emph{(ang. forward secrecy)}, a~więc ujawnienie długoterminowego klucza prywatnego dowolnego węzła pozwala na~odszyfrowanie całej przeszłej komunikacji.
+
+todo implementacja i~testy
+
+Przed wdrożeniem rozwiązania powinnien zostać przeprowadzony pełen audyt bezpieczeństwa zarówno protokołu jak~i~jego implementacji. Prawidłowy audyt powinien zostać przeprowadzony przez niezależny zespół, który~nie był powiązany z~projektem protokołu oraz~stworzeniem biblioteki, więc wykracza on poza zakres tej pracy.
