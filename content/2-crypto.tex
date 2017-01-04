@@ -40,6 +40,17 @@ Przy wyborze algorytmu dla potrzeb pracy istotne były:
 
 Powszechnie dostępne są jedynie implementacje samych blokowych algorytmów szyfrowania takich jak AES oraz DES lub funkcji skrótu takich jak SHA-256. By uzyskać uwierzytelnianie wiadomości o zmiennej długości należy algorytmy blokowe zastosować w odpowiedni sposób. Przykładem jest tryb CBC-MAC {\itshape (ang. Cipher Block Chaining - Message Authentication Code)}. Pozwala on na wygenerowanie kodu uwierzytelniającego daną wiadomość, poprzez zaszyfrowanie jej w trybie CBC i użycie ostatniego bloku szyfrogramu jako kodu.
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{images/cbc.png}
+\caption{Schemat działania trybu CBC.}
+\label{fig:cbc}
+\end{figure}
+
+W trybie CBC z każdego 16 bajtowego blok danych oraz szyfrogramu bloku poprzedzającego liczona jest suma modulo 2, co przedstawiono na rysunku \ref{fig:cbc}. Wektor inicjalizacyjny jest stosowany, by dwie wiadomości o identycznym pierwszym 16 bajtowym bloku po zaszyfrowaniu nie miały identycznego pierwszego bloku szyfrogramu. By wektor inicjalizacyjny poprawnie pełnił taką rolę, musi być losowy i przesyłany do odbiorcy. Nie musi być on tajny. W przypadku trybu CBC-MAC używany jest jedynie ostatni blok szyfrogramu, a więc wektor inicjalizacyjny nie jest potrzebny. Zwyczajowo korzysta się więc z wektora inicjalizacyjnego wypełnionego zerami.
+
+\FloatBarrier
+
 Tryb CBC-MAC -- przy nieprawidłowej implementacji -- może wprowadzić podatności:
 
 \begin{itemize}
