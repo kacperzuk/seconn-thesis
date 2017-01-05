@@ -48,13 +48,13 @@ D:>Some message...<
 
 \section{Poprawność implementacji algorytmów kryptograficznych}
 
+todo: gdzies tu napisac o recznych testach tez
+
 Poprawność implementacji algorytmów CBC i~dopełniania według PKCS\#7 stworzonych w~ramach pracy oraz~algorytmów AES, SHA-256 oraz~ECDH dostarczonych przez zewnętrzne biblioteki została zweryfikowana poprzez~stworzenie drugiej implementacji protokołu w~języku Java.
 
 Implementacje algorytmów AES, CBC, dopełniania według PKCS\#7, SHA-256 oraz~ECDH pochodzą z~pakietów java.security oraz~javax.crypto biblioteki standardowej języka Java. Implementacja ECBC-MAC została wykonana w~ramach pracy w~oparciu o~implementację CBC dostarczoną przez bibliotekę standardową. Użyte konfiguracje szyfrów to \emph{AES/CBC/NoPadding} i~\emph{AES/ECB/NoPadding} do~obliczania sygnatury oraz~\emph{AES/CBC/PKCS7Padding} do~szyfrowania i~deszyfrowania.
 
 W~oparciu o~tak stworzoną bibliotekę w~języku Java napisano przykładową aplikację na~platformę Android. Aplikacja po~uruchomieniu stara się nawiązać połączenie Bluetooth z~urządzeniem o~nazwie ,,seconn''. Po~nawiązaniu połączenia Bluetooth wywoływana jest metoda biblioteki służąca nawiązaniu bezpiecznego połączenia (wysłaniu pierwszego HelloRequest). Wszystkie zmiany stanu połączenia są na~bieżąco wyświetlane na~ekranie, a~po nawiązaniu bezpiecznego połączenia wyświetlane są klucze publiczne obu węzłów i~możliwe jest przesyłanie uwierzytelnionych i~zaszyfrowanych danych do~drugiego węzła.
-
-Przykładowa aplikacja mobilna skutecznie połączyła się z~urządzeniem AVR, a~przesyłane dane były prawidłowo deszyfrowane, co potwierdza że~implementacja algorytmów z~zewnętrzych bibliotek AVR oraz~implementacje wykonane w~ramach pracy są zgodne z~referencyjnymi implementacjami dostępnymi w~bibliotece standardowej języka Java na~platformie Android. Zrzut ekranu z~aplikacji przedstawiono na~rysunku \ref{fig:android}.
 
 \begin{figure}
 \centering
@@ -62,3 +62,6 @@ Przykładowa aplikacja mobilna skutecznie połączyła się z~urządzeniem AVR, 
 \caption{Zrzut ekranu z przykładowej aplikacji implementującej protokół na platformę Android}
 \label{fig:android}
 \end{figure}
+
+Przykładowa aplikacja mobilna skutecznie połączyła się z~urządzeniem AVR, a~przesyłane dane były prawidłowo deszyfrowane, co potwierdza że~implementacja algorytmów z~zewnętrzych bibliotek AVR oraz~implementacje wykonane w~ramach pracy są zgodne z~referencyjnymi implementacjami dostępnymi w~bibliotece standardowej języka Java na~platformie Android. Zrzut ekranu z~aplikacji przedstawiono na~rysunku \ref{fig:android}.
+
