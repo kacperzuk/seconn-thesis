@@ -48,9 +48,21 @@ D:>Some message...<
 
 \section{Poprawność implementacji algorytmów kryptograficznych}
 
-todo: gdzies tu napisac o recznych testach tez
+W~trakcie tworzenia implementacje algorytmów były weryfikowane poprzez~porównywanie przykładowych zestawów danych wejściowych i~wejściowych z~niezależnymi implementacjami.
 
-Poprawność implementacji algorytmów CBC i~dopełniania według PKCS\#7 stworzonych w~ramach pracy oraz~algorytmów AES, SHA-256 oraz~ECDH dostarczonych przez zewnętrzne biblioteki została zweryfikowana poprzez~stworzenie drugiej implementacji protokołu w~języku Java.
+Algorytm AES oraz~tryb CBC zostały przetestowane przy użyciu aplikacji internetowej \emph{OnlineDomainTools}\footnote{http://aes.online-domain-tools.com/ [dostęp 5.01.2017]}. Ze~względu na~brak dokumentacji dotyczącej dopełniania do~pełnych bloków w~aplikacji \emph{OnlineDomainTools}, dane wejściowe podawano już dopełnione. Zweryfikowano:
+
+\begin{itemize}
+    \item zgodność tekstu jawnego po~zaszyfrowaniu na~urządzeniu AVR i~zdeszyfrowaniu w~aplikacji,
+    \item zgodność tekstu jawnego po~zaszyfrowaniu w~aplikacji i~zdeszyfrowaniu na~urządzeniu AVR,
+    \item zgodność szyfrogramów po~zaszyfrowaniu tekstu jawnego w~aplikacji oraz~na~urządzeniu AVR przy zastosowaniu tego samego wektora inicjalizacyjnego.
+\end{itemize}
+
+Wszystkie powyższe testy wykonano zarówno dla danych wejściowych o~długości jednego jak~i~wielu bloków.
+
+Poprawność ustalenie wspólnego sekretu algorytmem ECDH sprawdzono poprzez~porównanie sekretu obliczonego na~urządzeniu z~sekretem obliczonym przez aplikację internetową \emph{JavaScript ECDH Key Exchange Demo}\footnote{http://www-cs-students.stanford.edu/~tjw/jsbn/ecdh.html [dostęp 5.01.2017]}. Operacje dokonywano na~kluczach wygenerowanych na~urządzeniu AVR przez bibliotekę \emph{micro-ecc}.
+
+Poprawność implementacji algorytmów CBC i~dopełniania według PKCS\#7 stworzonych w~ramach pracy oraz~algorytmów AES, SHA-256 oraz~ECDH dostarczonych przez zewnętrzne biblioteki została także zweryfikowana poprzez~stworzenie drugiej implementacji protokołu w~języku Java.
 
 Implementacje algorytmów AES, CBC, dopełniania według PKCS\#7, SHA-256 oraz~ECDH pochodzą z~pakietów java.security oraz~javax.crypto biblioteki standardowej języka Java. Implementacja ECBC-MAC została wykonana w~ramach pracy w~oparciu o~implementację CBC dostarczoną przez bibliotekę standardową. Użyte konfiguracje szyfrów to \emph{AES/CBC/NoPadding} i~\emph{AES/ECB/NoPadding} do~obliczania sygnatury oraz~\emph{AES/CBC/PKCS7Padding} do~szyfrowania i~deszyfrowania.
 
