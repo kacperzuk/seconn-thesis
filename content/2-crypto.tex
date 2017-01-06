@@ -24,9 +24,9 @@ Biblioteka \emph{AVR-Crypto-Lib} dostarcza implementację algorytmów RSA oraz~D
 
 Następnym kryterium jest złożoność obliczeniowa. W~analizie przeprowadzonej przez pracowników \emph{Sun Microsystems Laboratories} wykazano, że~na mikroprocesorach AVR algorytmy oparte o~krzywe eliptyczne są o~rząd wielkości szybsze od~algorytmu RSA~\cite{Gura2004}.
 
-Krzywe eliptyczne wymagają najkrótszych kluczy. Rekomendacje NIST~\cite{Nist} (National Institute of Standards and Technology) podają, że~256-bitowy klucz ECC \emph{(ang. Elliptic Curve Cryptography)} zapewnia bezpieczeństwo porównywalne do~3072-bitowego klucza RSA lub~DSA i~że taki klucz wystarczy do~2030 roku.
+Krzywe eliptyczne wymagają najkrótszych kluczy. Rekomendacje NIST~\cite{Nist} (National Institute of Standards and Technology) podają, że~256-bitowy klucz ECC (ang. \emph{Elliptic Curve Cryptography}) zapewnia bezpieczeństwo porównywalne do~3072-bitowego klucza RSA lub~DSA i~że taki klucz wystarczy do~2030 roku.
 
-W~związku z~przewagą krzywych eliptycznych przy zadanych założeniach do~ustalenia wspólnego klucza wybrano algorytm ECDH \emph{(ang. Elliptic Curve Diffie--Hellman)}. Wadą tego rozwiązania jest niezmienność klucza ustalanego tą metodą. Powoduje to brak utajnienia przekazywania \emph{(ang. forward secrecy)}.
+W~związku z~przewagą krzywych eliptycznych przy zadanych założeniach do~ustalenia wspólnego klucza wybrano algorytm ECDH (ang. \emph{Elliptic Curve Diffie--Hellman}). Wadą tego rozwiązania jest niezmienność klucza ustalanego tą metodą. Powoduje to brak utajnienia przekazywania (ang. \emph{forward secrecy}).
 
 \section{Kryptografia symetryczna}
 \label{sec:kryptoSym}
