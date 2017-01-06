@@ -47,7 +47,7 @@ Powszechnie dostępne są jedynie implementacje samych blokowych algorytmów sz
 \label{fig:cbc}
 \end{figure}
 
-W~trybie CBC z~każdego 16 bajtowego blok danych oraz~szyfrogramu bloku poprzedzającego liczona jest suma modulo 2, co przedstawiono na~rysunku \ref{fig:cbc}. Wektor inicjalizacyjny jest stosowany, by~dwie wiadomości o~identycznym pierwszym 16 bajtowym bloku po~zaszyfrowaniu nie miały identycznego pierwszego bloku szyfrogramu. By~wektor inicjalizacyjny poprawnie pełnił taką rolę, musi być losowy i~przesyłany do~odbiorcy. Nie musi być on tajny. W~przypadku trybu CBC-MAC używany jest jedynie ostatni blok szyfrogramu, a~więc wektor inicjalizacyjny nie jest potrzebny. Zwyczajowo korzysta się więc z~wektora inicjalizacyjnego wypełnionego zerami.
+W~trybie CBC z~każdego 16 bajtowego bloku danych oraz~szyfrogramu bloku poprzedzającego liczona jest suma modulo 2, co przedstawiono na~rysunku \ref{fig:cbc}. Wektor inicjalizacyjny jest stosowany, by~dwie wiadomości o~identycznym pierwszym 16 bajtowym bloku po~zaszyfrowaniu nie miały identycznego pierwszego bloku szyfrogramu. By~wektor inicjalizacyjny poprawnie pełnił taką rolę, musi być losowy i~przesyłany do~odbiorcy. Nie musi być on tajny. W~przypadku trybu CBC-MAC używany jest jedynie ostatni blok szyfrogramu, a~więc wektor inicjalizacyjny nie jest potrzebny. Zwyczajowo korzysta się więc z~wektora inicjalizacyjnego wypełnionego zerami.
 
 \FloatBarrier
 
