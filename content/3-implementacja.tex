@@ -126,7 +126,7 @@ Protokół zakłada też, że~przesyłanie danych jest niezawodne, połączeniow
 \section{Generowanie współdzielonego klucza}
 \label{sec:sharedkey}
 
-Każdy z~węzłów po~odebraniu HelloRequest używa odebranego klucza publicznego oraz~swojego klucza publicznego do~ustalenia wspólnego sekretu przy użyciu algorytmu ECDH (ang. \emph{Elliptic curve Diffie--Hellman}) oraz~proponowanej przez NIST krzywej eliptycznej P-256~\cite{kerry2013digital} (w RFC 5480 nazwaną krzywą secp256r1~\cite{turner2009elliptic}).
+Każdy z~węzłów po~odebraniu HelloRequest używa odebranego klucza publicznego oraz~swojego klucza publicznego do~ustalenia wspólnego sekretu przy użyciu algorytmu ECDH oraz~proponowanej przez NIST krzywej eliptycznej P-256~\cite{kerry2013digital} (w RFC 5480 nazwaną krzywą secp256r1~\cite{turner2009elliptic}).
 
 Z~sekretu będącego wynikiem algorytmu ECDH liczony jest skrót przy użyciu algorytmu SHA-256. Następnie jest on dzielony na~dwie części po~128-bitów. Pierwsza część staje się współdzielonym kluczem używanym do~szyfrowania, druga część staje się współdzielonym kluczem używanym do~uwierzytelniania.
 
